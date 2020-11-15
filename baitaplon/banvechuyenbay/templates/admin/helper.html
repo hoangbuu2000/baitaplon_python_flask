@@ -1,0 +1,402 @@
+{% extends 'admin/master.html' %}
+
+{% block head_css %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/my_flask_admin.css') }}">
+{% endblock %}
+
+{% block body %}
+    <h1>Đây là trang hướng dẫn cách thêm dữ liệu cho admin</h1>
+    <br>
+    <p>Cơ sở dữ liệu được chia thành 3 nhóm</p>
+    <ul class="list-group">
+        <li class="list-group-item list-group-item-action">Airline - Nhóm quản lý các dữ liệu liên quan đến chuyến bay, sân bay, máy bay,...</li>
+        <li class="list-group-item list-group-item-action">User - Nhóm quản lý các dữ liệu liên quan đến người dùng hệ thống.</li>
+        <li class="list-group-item list-group-item-action">Ticket - Nhóm quản lý các dữ liệu liên quan đến việc đặt vé.</li>
+    </ul>
+    <br>
+    <p class="alert alert-warning">
+        Lưu ý: Khi thêm dữ liệu, đối với mối quan hệ 1-n, ta thêm dữ liệu vào bảng 1 trước sau đó là bảng nhiều.
+        Đối với mối quan hệ n-n, ta thêm dữ liệu vào các bảng chính trước sau đó là bảng trung gian.
+    </p>
+    <br>
+    <hr>
+    <div>
+        <p class="lead">Cách thêm dữ liệu vào nhóm Airline</p>
+        <p class="alert alert-dark">Nhóm Airline gồm 5 bảng</p>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Máy bay</th>
+                    <th>Đường bay</th>
+                    <th>Chuyến bay</th>
+                    <th>Sân bay</th>
+                    <th>Sân bay _ Đường bay</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Lưu dữ liệu các máy bay trong hệ thống.</td>
+                    <td>Lưu dữ liệu các đường bay trong hệ thống. Bao gồm sân bay đi, sân bay đến,
+                        sân bay trung gian, thời gian dừng nếu có.</td>
+                    <td>Lưu dữ liệu các chuyến bay trong hệ thống.</td>
+                    <td>Lưu dữ liệu các máy bay trong hệ thống.</td>
+                    <td>Bảng trung gian để lưu dữ liệu các sân bay và đường bay vì có mối quan hệ nhiều nhiều.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Máy bay</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>Tên của máy bay.</td>
+                </tr>
+                <tr>
+                    <td>Ghế hạng 1</td>
+                    <td>Số lượng ghế hạng 1.</td>
+                </tr>
+                <tr>
+                    <td>Ghế hạng 2</td>
+                    <td>Số lượng ghế hạng 2.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>1 - n</td>
+                    <td>Chuyến bay.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Đường bay</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Sân bay đi</td>
+                    <td>Tên sân bay cất cánh.</td>
+                </tr>
+                <tr>
+                    <td>Sân bay đến</td>
+                    <td>Tên sân bay hạ cánh.</td>
+                </tr>
+                <tr>
+                    <td>Sân bay trung gian</td>
+                    <td>Tên sân bay trung gian nếu có. Một chuyến bay chỉ có tối đa 2 sân bay trung gian.</td>
+                </tr>
+                <tr>
+                    <td>Thời gian dừng</td>
+                    <td>Thời gian dừng tại sân bay trung gian nếu có.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>1 - n</td>
+                    <td>Chuyến bay.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>n - n</td>
+                    <td>Sân bay.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Chuyến bay</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Máy bay</td>
+                    <td>Tên máy bay thuộc chuyến bay hiện tại. Được tham chiếu đến bảng máy bay.</td>
+                </tr>
+                <tr>
+                    <td>Đường bay</td>
+                    <td>Tên đường bay thuộc chuyến bay hiện tại (gồm sân bay đi, đến, trung gian,...).
+                        Được tham chiếu đến bảng đường bay.</td>
+                </tr>
+                <tr>
+                    <td>Thời gian bay</td>
+                    <td>Thời gian chuyến bay hoàn thành.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>n - 1</td>
+                    <td>Máy bay.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>n - 1</td>
+                    <td>Đường bay.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Sân bay</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>Tên sân bay.</td>
+                </tr>
+                <tr>
+                    <td>Vị trí</td>
+                    <td>Vị trí của sân bay.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>n - n</td>
+                    <td>Đường bay.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Sân bay _ Đường bay</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Đường bay</td>
+                    <td>Tên đường bay được tham chiếu đến bảng đường bay.</td>
+                </tr>
+                <tr>
+                    <td>Sân bay</td>
+                    <td>Tên sân bay được tham chiếu đến bảng sân bay.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>Note</td>
+                    <td>Vì mối quan hệ giữa Đường bay và Sân bay là n-n nên đây là bảng trung gian cho mối quan hệ đó.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <br>
+    <hr>
+    <div>
+        <p class="lead">Cách thêm dữ liệu vào nhóm User</p>
+        <p class="alert alert-dark">Nhóm User gồm 3 bảng</p>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>User Role</th>
+                    <th>Nhân viên</th>
+                    <th>Khách hàng</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Lưu dữ liệu các vai trò của người dùng trong hệ thống.</td>
+                    <td>Lưu dữ liệu của nhân viên trong hệ thống.</td>
+                    <td>Lưu dữ liệu của khách hàng trong hệ thống.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>User Role</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>Tên của vai trò.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>1 - n</td>
+                    <td>Nhân viên.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Nhân viên</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>Tên nhân viên.</td>
+                </tr>
+                <tr>
+                    <td>Username</td>
+                    <td>Tài khoản nhân viên.</td>
+                </tr>
+                <tr>
+                    <td>Password</td>
+                    <td>Mật khẩu nhân viên.</td>
+                </tr>
+                <tr>
+                    <td>Active</td>
+                    <td>Kích hoạt nhân viên.</td>
+                </tr>
+                <tr>
+                    <td>User Role</td>
+                    <td>Vai trò của nhân viên được tham chiếu đến bảng User Role.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>n - 1</td>
+                    <td>User Role.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>1 - n</td>
+                    <td>Đơn đặt vé.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Khách hàng</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>Tên khách hàng.</td>
+                </tr>
+                <tr>
+                    <td>Cmnd</td>
+                    <td>Số căn cước công dân của khách hàng.</td>
+                </tr>
+                <tr>
+                    <td>Địa chỉ</td>
+                    <td>Địa chỉ của khách hàng.</td>
+                </tr>
+                <tr>
+                    <td>Sdt</td>
+                    <td>Số điện thoại của khách hàng.</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>Địa chỉ email của khách hàng.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>1 - n</td>
+                    <td>Đơn đặt vé.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <br>
+    <hr>
+    <div>
+        <p class="lead">Cách thêm dữ liệu vào nhóm Ticket</p>
+        <p class="alert alert-dark">Nhóm Ticket gồm 3 bảng</p>
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Loại vé</th>
+                    <th>Đơn đặt vé</th>
+                    <th>Vé</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Lưu dữ liệu các hạng vé và đơn giá trong hệ thống.</td>
+                    <td>Lưu dữ liệu các đơn đặt vé của khách hàng trong hệ thống.</td>
+                    <td>Lưu dữ liệu vé trong hệ thống.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Loại vé</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>Tên của loại (hạng) vé.</td>
+                </tr>
+                <tr>
+                    <td>Đơn giá</td>
+                    <td>Giá của loại (hạng) vé.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>1 - n</td>
+                    <td>Vé.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Đơn đặt vé</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Nhân viên</td>
+                    <td>Tên nhân viên phụ trách đơn.</td>
+                </tr>
+                <tr>
+                    <td>Khách hàng</td>
+                    <td>Tên khách hàng sở hữu đơn.</td>
+                </tr>
+                <tr>
+                    <td>Ngày đặt vé</td>
+                    <td>Ngày mà đơn đặt vé được ghi nhận.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>1 - n</td>
+                    <td>Vé.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>n - 1</td>
+                    <td>Khách hàng, Nhân viên.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Vé</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>Tên vé.</td>
+                </tr>
+                <tr>
+                    <td>Chuyến bay</td>
+                    <td>Chuyến bay mà vé này thuộc về. Được tham chiếu đến bảng Chuyến bay.</td>
+                </tr>
+                <tr>
+                    <td>Loại vé</td>
+                    <td>Loại vé mà khách hàng chọn. Được tham chiếu đến bảng Loại vé.</td>
+                </tr>
+                <tr>
+                    <td>Đơn đặt vé</td>
+                    <td>Đơn đặt vé mà vé này thuộc về. Được tham chiếu đến bảng Đơn đặt vé.</td>
+                </tr>
+                <tr class="bg-warning">
+                    <td>n - 1</td>
+                    <td>Chuyến bay, Đơn đặt vé, Loại vé.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
