@@ -6,8 +6,33 @@ import hashlib
 
 
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
+
+
+@app.route('/contact')
+def contact():
+    return render_template('contacts.html')
+
+
+@app.route('/offer')
+def offer():
+    return render_template('offers.html')
+
+
+@app.route('/book')
+def book():
+    return render_template('book.html')
+
+
+@app.route('/service')
+def service():
+    return render_template('services.html')
+
+
+@app.route('/safety')
+def safety():
+    return render_template('safety.html')
 
 
 @login.user_loader

@@ -1,0 +1,16 @@
+Để đăng nhập vào trang admin, thầy thêm '/admin' vào
+url trình duyệt
+
+Hiện tại trong cơ sở dữ liệu của nhóm em có 2 user.
+1 user có role là 'Quản trị' và 
+1 user có role là 'Nhân viên'.
+Chỉ user có role là 'Quản trị' mới đăng nhập được
+vào trang admin
+
+User 'Quản trị':
+username: hoangbuu2000
+password: 123456789
+
+User 'Nhân viên':
+username: duongtu2000
+password: 123456789
