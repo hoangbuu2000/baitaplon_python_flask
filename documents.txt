@@ -1,0 +1,32 @@
+/* CÁC FILE LIÊN QUAN ĐẾN SPRINT 1 */
+- Thư mục templates/admin
+- init.py, admin.py, demo.py, models.py, airlinedb.sql
+
+/* TỔNG QUAN VỀ CƠ SỞ DỮ LIỆU VÀ TRANG ADMIN */
+Trang admin bao gồm tất cả các bảng có trong
+cơ sở dữ liệu ngoại trừ bảng Account vì:
+
+ - Bảng Account dùng để lưu trữ thông tin tài khoản
+   và mật khẩu của Nhân viên nên để bảo mật sẽ không
+   đưa vào trang phân hệ admin.
+ - Dữ liệu sẽ được thêm vào bảng này thông qua việc
+   nhân viên đăng ký tài khoản.
+ - Chức năng đăng ký sẽ được thực hiện trong sprint 2.
+
+/* HƯỚNG DẪN ĐĂNG NHẬP */
+Để đăng nhập vào trang admin, thầy thêm '/admin' vào
+url trình duyệt
+
+Hiện tại trong cơ sở dữ liệu của nhóm em có 2 user.
+1 user có role là 'Quản trị' và 
+1 user có role là 'Nhân viên'.
+Chỉ user có role là 'Quản trị' mới đăng nhập được
+vào trang admin
+
+User 'Quản trị':
+username: hoangbuu2000
+password: 123456789
+
+User 'Nhân viên':
+username: duongtu2000
+password: 123456789
