@@ -5,7 +5,8 @@
   {% block title %}
 <title>AirLines</title>
   {% endblock %}
-<meta charset="utf-8">
+<meta charset="utf-8"/>
+  <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8"/>
   <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}" type="text/css">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}" type="text/css">
@@ -13,7 +14,7 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.5.2.js') }}" ></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/cufon-yui.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/cufon-replace.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/Cabin_400.font.js') }}"></script>
+<!--<script type="text/javascript" src="{{ url_for('static', filename='js/Cabin_400.font.js') }}"></script>-->
 <script type="text/javascript" src="{{ url_for('static', filename='js/tabs.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.jqtransform.js') }}" ></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.nivo.slider.pack.js') }}"></script>
@@ -33,7 +34,7 @@
   <header>
     <div class="wrapper">
       <h1><a href="{{ url_for('index') }}" id="logo">AirLines</a></h1>
-      <span id="slogan">Fast, Frequent &amp; Safe Flights</span>
+      <span id="slogan">Nhanh chóng &amp; An toàn</span>
       <nav id="top_nav">
         <ul>
           <li><a href="{{ url_for('index') }}" class="nav1">Home</a></li>
@@ -179,7 +180,7 @@
           </div>
         </div>
       </article>
-      <div id="slider"> <img src="images/banner1.jpg" alt=""> <img src="images/banner2.jpg" alt=""> <img src="images/banner3.jpg" alt=""> </div>
+      <div id="slider"> <img src="{{ url_for('static', filename='images/banner1.jpg') }}" alt=""> <img src="{{ url_for('static', filename='images/banner2.jpg') }}" alt=""> <img src="{{ url_for('static', filename='images/banner3.jpg') }}" alt=""> </div>
     </div>
     <div class="wrapper pad1">
       <article class="col1">
@@ -213,12 +214,12 @@
         <h3>About Our Airlines<span>Template created by TemplateMonster.com team</span></h3>
         <div class="wrapper">
           <article class="cols">
-            <figure><img src="images/page1_img1.jpg" alt="" class="pad_bot2"></figure>
+            <figure><img src="{{ url_for('static', filename='images/page1_img1.jpg') }}" alt="" class="pad_bot2"></figure>
             <p class="pad_bot1"><strong>Airlines is one of free website templates created by TemplateMonster.com team.</strong></p>
             <p>This website template is optimized for 1024X768 screen resolution. It is also XHTML &amp; CSS valid. This website template has several pages: <a href="index.html">About</a>, <a href="offers.html">Offers</a>, <a href="book.html">Book</a>, <a href="services.html">Services</a>, <a href="safety.html">Safety</a>, <a href="contacts.html">Contacts</a>.</p>
           </article>
           <article class="cols pad_left1">
-            <figure><img src="images/page1_img2.jpg" alt="" class="pad_bot2"></figure>
+            <figure><img src="{{ url_for('static', filename='images/page1_img2.jpg') }}" alt="" class="pad_bot2"></figure>
             <p class="pad_bot1"><strong>This Airlines Template goes with two packages.</strong></p>
             <p>With PSD source files and without them. PSD source files are available for free for the registered members of Templates.com. The basic package (without PSD source files) is available for anyone without registration).</p>
           </article>
@@ -232,12 +233,12 @@
   <footer>
     <div class="wrapper">
       <ul id="icons">
-        <li><a href="#" class="normaltip"><img src="images/icon1.jpg" alt=""></a></li>
-        <li><a href="#" class="normaltip"><img src="images/icon2.jpg" alt=""></a></li>
-        <li><a href="#" class="normaltip"><img src="images/icon3.jpg" alt=""></a></li>
-        <li><a href="#" class="normaltip"><img src="images/icon4.jpg" alt=""></a></li>
-        <li><a href="#" class="normaltip"><img src="images/icon5.jpg" alt=""></a></li>
-        <li><a href="#" class="normaltip"><img src="images/icon6.jpg" alt=""></a></li>
+        <li><a href="#" class="normaltip"><img src="{{ url_for('static', filename='images/icon1.jpg') }}" alt=""></a></li>
+        <li><a href="#" class="normaltip"><img src="{{ url_for('static', filename='images/icon2.jpg') }}" alt=""></a></li>
+        <li><a href="#" class="normaltip"><img src="{{ url_for('static', filename='images/icon3.jpg') }}" alt=""></a></li>
+        <li><a href="#" class="normaltip"><img src="{{ url_for('static', filename='images/icon4.jpg') }}" alt=""></a></li>
+        <li><a href="#" class="normaltip"><img src="{{ url_for('static', filename='images/icon5.jpg') }}" alt=""></a></li>
+        <li><a href="#" class="normaltip"><img src="{{ url_for('static', filename='images/icon6.jpg') }}" alt=""></a></li>
       </ul>
       <div class="links">Copyright &copy; <a href="#">Domain Name</a> All Rights Reserved<br>
         Design by <a target="_blank" href="http://www.templatemonster.com/">TemplateMonster.com</a></div>
@@ -245,7 +246,7 @@
   </footer>
   <!--footer end-->
 </div>
-<script type="text/javascript">Cufon.now();</script>
+<!--<script type="text/javascript">Cufon.now();</script>-->
 <script type="text/javascript">
 $(document).ready(function () {
     tabs.init();

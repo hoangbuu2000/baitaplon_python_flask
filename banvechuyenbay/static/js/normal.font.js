@@ -1,0 +1,1 @@
+Cufon.registerFont({"w":0,"face":{"font-family":"","font-weight":"","font-stretch":"","font-style":"normal","units-per-em":"","panose-1":"","ascent":"","descent":"","bbox":"","underline-thickness":"","underline-position":"","unicode-range":""},"glyphs":{" ":{},"\u00a0":{}}});
