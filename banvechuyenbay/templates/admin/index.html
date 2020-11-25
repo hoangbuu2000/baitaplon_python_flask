@@ -2,7 +2,41 @@
 
 {% block head_css %}
     {{ super() }}
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/my_flask_admin.css') }}">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <style>
+        {% if current_user.is_authenticated %}
+        nav.navbar{
+            display:block;
+        }
+        body{
+            background:white;
+        }
+        {% else %}
+        nav.navbar{
+            display:none;
+        }
+        body{
+            background:url(https://images6.alphacoders.com/909/thumb-1920-909641.png) top center no-repeat #000;
+        }
+        {% endif %}
+    </style>
+{% endblock %}
+
+{% block main_menu %}
+{{ super() }}
+{% endblock %}
+
+{% block menu_links %}
+{{ super() }}
+{% endblock %}
+
+{% block brand %}
+{{ super() }}
 {% endblock %}
 
 {% block body %}

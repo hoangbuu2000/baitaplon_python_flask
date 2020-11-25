@@ -1,9 +1,14 @@
+from flask_admin.helpers import validate_form_on_submit
+from wtforms import PasswordField, ValidationError
+from wtforms.validators import DataRequired
+
 from banvechuyenbay import ad, db
 from banvechuyenbay.models import *
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
 from flask_login import logout_user, current_user
 from flask import redirect
+from banvechuyenbay.models import *
 
 
 class AccessibleView(BaseView):
@@ -23,49 +28,76 @@ class ModelTemplate(ModelView, AccessibleView):
 
 class MayBayModelView(ModelTemplate):
     form_columns = ('name', 'ghe_hang_1', 'ghe_hang_2',)
+    column_labels = dict(name='Tên máy bay', ghe_hang_1="Số lượng ghế hạng 1",
+                         ghe_hang_2="Số lượng ghế hạng 2",)
 
 
 class DuongBayModelView(ModelTemplate):
     form_columns = ('san_bay_di', 'san_bay_den', 'san_bay_trung_gian', 'thoi_gian_dung', 'khoang_cach',)
+    column_labels = dict(san_bay_di='Sân bay đi', san_bay_den='Sân bay đến',
+                         san_bay_trung_gian='Sân bay trung gian', thoi_gian_dung='Thời gian dừng',
+                         khoang_cach='Khoảng cách (km)',)
 
 
 class ChuyenBayModelView(ModelTemplate):
-    form_columns = ('may_bay', 'duong_bay', 'thoi_gian_bay',)
+    form_columns = ('may_bay', 'duong_bay', 'ngay_khoi_hanh', 'thoi_gian_bay',)
+    column_list = ('may_bay', 'duong_bay', 'ngay_khoi_hanh', 'thoi_gian_bay',)
+    column_labels = dict(may_bay='Tên máy bay', duong_bay='Tên đường bay',
+                         ngay_khoi_hanh='Ngày khởi hành', thoi_gian_bay='Thời gian bay',)
 
 
 class SanBayModelView(ModelTemplate):
     form_columns = ('name', 'vi_tri',)
-
-
-class SanBayDuongBayModelView(ModelTemplate):
-    pass
+    column_labels = dict(name='Tên sân bay', vi_tri='Vị trí sân bay',)
 
 
 class UserRoleModelView(ModelTemplate):
     form_columns = ('name',)
+    column_labels = dict(name='Vai trò',)
 
 
-# Không cho phép hiển thị mật khẩu và tạo nhân viên
 class NhanVienModelView(ModelTemplate):
-    column_exclude_list = ('password',)
-    form_columns = ('name', 'username', 'active', 'user_role',)
-    can_create = False
+    form_columns = ('name', 'gioi_tinh', 'ngay_sinh', 'dia_chi', 'que_quan', 'dien_thoai',
+                    'avatar', 'user_role',)
+    column_labels = dict(name='Họ tên', gioi_tinh='Giới tính', ngay_sinh='Ngày sinh',
+                         dia_chi='Địa chỉ', que_quan='Quê quán', dien_thoai='Điện thoại',
+                         avatar='Ảnh đại diện', user_role='Vai trò',)
 
 
 class KhachHangModelView(ModelTemplate):
-    form_columns = ('name', 'Cmnd', 'dia_chi', 'sdt', 'email',)
+    form_columns = ('name', 'gioi_tinh', 'ngay_sinh', 'Cmnd', 'dia_chi', 'sdt', 'email',)
+    column_labels = dict(name='Họ tên', gioi_tinh='Giới tính', ngay_sinh='Ngày sinh',
+                         Cmnd='Căn cước công dân', dia_chi='Địa chỉ', sdt='Điện thoại',
+                         email='Email',)
+
+
+class AccountModelView(ModelTemplate):
+    column_list = ('username', 'active', 'nhan_vien',)
+    form_edit_rules = ('username', 'active', 'nhan_vien',)
+    form_create_rules = ('username', 'password', 'active', 'nhan_vien',)
+    form_extra_fields = {
+        'password': PasswordField('Password')
+    }
+    column_labels = dict(nhan_vien='Nhân viên',)
 
 
 class DonDatVeModelView(ModelTemplate):
-    form_columns = ('nhan_vien', 'khach_hang', 'ngay_dat_ve',)
+    form_columns = ('nhan_vien', 'khach_hang', 'ngay_dat_ve', 've',)
+    column_list = ('nhan_vien', 'khach_hang', 'ngay_dat_ve',)
+    column_labels = dict(nhan_vien='Nhân viên phụ trách', khach_hang='Khách hàng',
+                         ngay_dat_ve='Ngày đặt vé', ve='Vé',)
 
 
 class LoaiVeModelView(ModelTemplate):
     form_columns = ('name', 'don_gia',)
+    column_labels = dict(name='Tên hạng vé', don_gia='Đơn giá',)
 
 
 class VeModelView(ModelTemplate):
-    form_columns = ('name', 'chuyen_bay', 'loai_ve', 'don_dat_ve',)
+    form_columns = ('name', 'chuyen_bay', 'loai_ve', 'available',)
+    column_list = ('name', 'chuyen_bay', 'loai_ve', 'available',)
+    column_labels = dict(name='Tên vé', chuyen_bay='Tên chuyến bay', loai_ve='Hạng vé',
+                         available="Available",)
 
 
 # Định nghĩa 1 view mới không liên quan đến các models để hiển thị cách sử dụng cho người dùng
@@ -87,13 +119,14 @@ group1 = "Airline"
 group2 = "User"
 group3 = "Ticket"
 
+
 ad.add_view(MayBayModelView(MayBay, db.session, category=group1, name="Máy bay"))
+ad.add_view(SanBayModelView(SanBay, db.session, category=group1, name="Sân bay"))
 ad.add_view(DuongBayModelView(DuongBay, db.session, category=group1, name="Đường bay"))
 ad.add_view(ChuyenBayModelView(ChuyenBay, db.session, category=group1, name="Chuyến bay"))
-ad.add_view(SanBayModelView(SanBay, db.session, category=group1, name="Sân bay"))
-ad.add_view(SanBayDuongBayModelView(SanBayDuongBay, db.session, category=group1, name="Sân bay _ Đường bay"))
 ad.add_view(UserRoleModelView(UserRole, db.session, category=group2, name="Vai trò người dùng"))
 ad.add_view(NhanVienModelView(NhanVien, db.session, category=group2, name="Nhân viên"))
+ad.add_view(AccountModelView(Account, db.session, category=group2, name='Account'))
 ad.add_view(KhachHangModelView(KhachHang, db.session, category=group2, name="Khách hàng"))
 ad.add_view(LoaiVeModelView(LoaiVe, db.session, category=group3, name="Loại vé"))
 ad.add_view(DonDatVeModelView(DonDatVe, db.session, category=group3, name="Đơn đặt vé"))

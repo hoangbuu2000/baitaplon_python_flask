@@ -1,15 +1,42 @@
+
+
 {% block body %}
-<form action="{{ url_for('login_admin') }}" method="post">
-    <div class="form-group">
-        <label for="username">Userame</label>
-        <input type="text" name="username" id="username" class="form-control">
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+    <!-- Tabs Titles -->
+
+    <!-- Icon -->
+    <div class="fadeIn first">
+      <img src="https://www.iconexperience.com/_img/v_collection_png/256x256/shadow/airplane2.png" id="icon" alt="User Icon"
+            style="width:100px;" />
     </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" name="password" id="password" class="form-control">
+
+    <!-- Login Form -->
+    <form action="{{ url_for('login_admin') }}" method="post">
+      <input type="text" id="login" class="fadeIn second" name="username" placeholder="username">
+      <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
+      <input type="submit" class="fadeIn fourth" value="Log In">
+    </form>
+
+    <!-- Remind Passowrd -->
+    <div id="formFooter">
+      <a class="underlineHover" href="#">Forgot Password?</a>
     </div>
-    <div class="form-group">
-        <input type="submit" class="btn btn-primary" value="Đăng nhập">
-    </div>
-</form>
+
+  </div>
+</div>
+<!--<form action="{{ url_for('login_admin') }}" method="post">-->
+<!--    <div class="form-group">-->
+<!--        <label for="username">Userame</label>-->
+<!--        <input type="text" name="username" id="username" class="form-control" required>-->
+<!--    </div>-->
+<!--    <div class="form-group">-->
+<!--        <label for="password">Password</label>-->
+<!--        <input type="password" name="password" id="password" class="form-control" required>-->
+<!--    </div>-->
+<!--    <div class="form-group">-->
+<!--        <input type="submit" class="btn btn-primary" value="Đăng nhập">-->
+<!--    </div>-->
+<!--</form>-->
 {% endblock %}

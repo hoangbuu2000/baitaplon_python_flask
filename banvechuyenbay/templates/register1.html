@@ -1,0 +1,24 @@
+{% extends 'register.html' %}
+
+{% block content %}
+<h2 class="text-center text-primary">Confirm Employee</h2>
+<form action="{{ url_for('register1') }}" method="post">
+
+    {% if message %}
+        <p class="alert alert-danger">{{ message }}</p>
+    {% endif %}
+    <div class="form-group">
+        <label for="fullname">Full Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="fullname" id="fullname" required>
+    </div>
+
+    <div class="form-group">
+        <label for="sdt">Số điện thoại <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="sdt" id="sdt" required>
+    </div>
+
+    <div class="from-group clearfix">
+        <input type="submit" class="btn btn-primary right" value="Tiếp tục">
+    </div>
+</form>
+{% endblock %}

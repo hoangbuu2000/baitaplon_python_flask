@@ -1,0 +1,49 @@
+{% extends 'index.html' %}
+
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+{% endblock %}
+
+{% block menu %}
+<li><a href="{{ url_for('index') }}"><span><span>About</span></span></a></li>
+<li><a href="{{ url_for('offer') }}"><span><span>Offers</span></span></a></li>
+<li><a href="{{ url_for('book') }}"><span><span>Book</span></span></a></li>
+<li><a href="{{ url_for('service') }}"><span><span>Services</span></span></a></li>
+<li><a href="{{ url_for('safety') }}"><span><span>Safety</span></span></a></li>
+<li class="end"><a href="{{ url_for('contact') }}"><span><span>Contacts</span></span></a></li>
+{% endblock %}
+
+{% block content %}
+<h2 class="text-center text-primary">Register Form</h2>
+<form action="{{ url_for('register') }}" method="post">
+    {% if message %}
+        <p class="alert alert-danger">{{ message }}</p>
+    {% endif %}
+    <div class="form-group">
+        <label for="fullname">Full name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="fullname" id="fullname" value="{{ fullname }}" readonly="True">
+    </div>
+
+    <div class="form-group">
+        <label for="sdt">Số điện thoại <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="sdt" id="sdt" value="{{ sdt }}" readonly="True">
+    </div>
+
+    <div class="form-group">
+        <label for="username">Username <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="username" id="username" required>
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password <span class="text-danger">*</span></label>
+        <input type="password" class="form-control" name="password" id="password" required>
+    </div>
+
+    <div class="from-group clearfix">
+        <a class="btn btn-primary left" href="{{ url_for('register1') }}">Quay lại</a>
+        <input type="submit" class="btn btn-primary right" value="Đăng ký">
+    </div>
+</form>
+{% endblock %}
