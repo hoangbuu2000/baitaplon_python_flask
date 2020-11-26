@@ -40,7 +40,7 @@ CREATE TABLE `account` (
 
 LOCK TABLES `account` WRITE;
 /*!40000 ALTER TABLE `account` DISABLE KEYS */;
-INSERT INTO `account` VALUES (1,'hoangbuu2000','e10adc3949ba59abbe56e057f20f883e',1),(2,'duongtu2000','e10adc3949ba59abbe56e057f20f883e',1);
+INSERT INTO `account` VALUES (1,'hoangbuu2000','e10adc3949ba59abbe56e057f20f883e',1);
 /*!40000 ALTER TABLE `account` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,7 +62,7 @@ CREATE TABLE `chuyenbay` (
   KEY `id_duong_bay` (`id_duong_bay`),
   CONSTRAINT `chuyenbay_ibfk_1` FOREIGN KEY (`id_may_bay`) REFERENCES `maybay` (`id`),
   CONSTRAINT `chuyenbay_ibfk_2` FOREIGN KEY (`id_duong_bay`) REFERENCES `duongbay` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,38 +71,8 @@ CREATE TABLE `chuyenbay` (
 
 LOCK TABLES `chuyenbay` WRITE;
 /*!40000 ALTER TABLE `chuyenbay` DISABLE KEYS */;
-INSERT INTO `chuyenbay` VALUES (1,1,1,'2020-11-25 18:23:31','08:00:00');
+INSERT INTO `chuyenbay` VALUES (1,1,1,'2020-11-27 20:00:00','08:00:00'),(2,2,2,'2020-11-26 21:00:00','01:00:00');
 /*!40000 ALTER TABLE `chuyenbay` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `dondatve`
---
-
-DROP TABLE IF EXISTS `dondatve`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `dondatve` (
-  `id_don_dat_ve` int NOT NULL AUTO_INCREMENT,
-  `id_khach_hang` int NOT NULL,
-  `id_nhan_vien` int NOT NULL,
-  `ngay_dat_ve` datetime DEFAULT NULL,
-  PRIMARY KEY (`id_don_dat_ve`),
-  KEY `id_khach_hang` (`id_khach_hang`),
-  KEY `id_nhan_vien` (`id_nhan_vien`),
-  CONSTRAINT `dondatve_ibfk_1` FOREIGN KEY (`id_khach_hang`) REFERENCES `khachhang` (`id`),
-  CONSTRAINT `dondatve_ibfk_2` FOREIGN KEY (`id_nhan_vien`) REFERENCES `nhanvien` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `dondatve`
---
-
-LOCK TABLES `dondatve` WRITE;
-/*!40000 ALTER TABLE `dondatve` DISABLE KEYS */;
-INSERT INTO `dondatve` VALUES (1,1,2,'2020-11-25 18:23:31');
-/*!40000 ALTER TABLE `dondatve` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -116,17 +86,13 @@ CREATE TABLE `duongbay` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_san_bay_di` int NOT NULL,
   `id_san_bay_den` int NOT NULL,
-  `id_san_bay_trung_gian` int DEFAULT NULL,
-  `thoi_gian_dung` time DEFAULT NULL,
   `khoang_cach` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id_san_bay_di` (`id_san_bay_di`),
   KEY `id_san_bay_den` (`id_san_bay_den`),
-  KEY `id_san_bay_trung_gian` (`id_san_bay_trung_gian`),
   CONSTRAINT `duongbay_ibfk_1` FOREIGN KEY (`id_san_bay_di`) REFERENCES `sanbay` (`id`),
-  CONSTRAINT `duongbay_ibfk_2` FOREIGN KEY (`id_san_bay_den`) REFERENCES `sanbay` (`id`),
-  CONSTRAINT `duongbay_ibfk_3` FOREIGN KEY (`id_san_bay_trung_gian`) REFERENCES `sanbay` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `duongbay_ibfk_2` FOREIGN KEY (`id_san_bay_den`) REFERENCES `sanbay` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -135,8 +101,40 @@ CREATE TABLE `duongbay` (
 
 LOCK TABLES `duongbay` WRITE;
 /*!40000 ALTER TABLE `duongbay` DISABLE KEYS */;
-INSERT INTO `duongbay` VALUES (1,1,2,3,'00:45:00',1616);
+INSERT INTO `duongbay` VALUES (1,1,2,1616),(2,1,4,80);
 /*!40000 ALTER TABLE `duongbay` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ghe`
+--
+
+DROP TABLE IF EXISTS `ghe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ghe` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `available` tinyint(1) NOT NULL,
+  `id_loai_ghe` int NOT NULL,
+  `id_may_bay` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_loai_ghe` (`id_loai_ghe`),
+  KEY `id_may_bay` (`id_may_bay`),
+  CONSTRAINT `ghe_ibfk_1` FOREIGN KEY (`id_loai_ghe`) REFERENCES `loaighe` (`id`),
+  CONSTRAINT `ghe_ibfk_2` FOREIGN KEY (`id_may_bay`) REFERENCES `maybay` (`id`),
+  CONSTRAINT `ghe_chk_1` CHECK ((`available` in (0,1)))
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ghe`
+--
+
+LOCK TABLES `ghe` WRITE;
+/*!40000 ALTER TABLE `ghe` DISABLE KEYS */;
+INSERT INTO `ghe` VALUES (1,'Ghế số 1',1,1,1),(2,'Ghế số 2',1,1,1),(3,'Ghế số 3',1,1,1),(4,'Ghế số 4',1,1,1),(5,'Ghế số 5',1,1,1),(6,'Ghế số 6',1,2,1),(7,'Ghế số 7',1,2,1),(8,'Ghế số 8',1,2,1),(9,'Ghế số 9',1,2,1),(10,'Ghế số 10',1,2,1);
+/*!40000 ALTER TABLE `ghe` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -167,18 +165,18 @@ CREATE TABLE `khachhang` (
 
 LOCK TABLES `khachhang` WRITE;
 /*!40000 ALTER TABLE `khachhang` DISABLE KEYS */;
-INSERT INTO `khachhang` VALUES (1,'Trần Phấn Huy','Nam','2000-11-02','123456789101','371 Nguyễn Kiệm, Q. Gò Vấp','0768107703','huybelta1234@gmail.com');
+INSERT INTO `khachhang` VALUES (1,'Trần Phấn Huy','Nam','2000-02-04','123456789101','371 Nguyễn Kiệm, Q. Gò Vấp','0768107705','huybelta1234@gmail.com');
 /*!40000 ALTER TABLE `khachhang` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `loaive`
+-- Table structure for table `loaighe`
 --
 
-DROP TABLE IF EXISTS `loaive`;
+DROP TABLE IF EXISTS `loaighe`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `loaive` (
+CREATE TABLE `loaighe` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `don_gia` float DEFAULT NULL,
@@ -187,13 +185,13 @@ CREATE TABLE `loaive` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `loaive`
+-- Dumping data for table `loaighe`
 --
 
-LOCK TABLES `loaive` WRITE;
-/*!40000 ALTER TABLE `loaive` DISABLE KEYS */;
-INSERT INTO `loaive` VALUES (1,'Vé hạng 1',1000000),(2,'Vé hạng 2',500000);
-/*!40000 ALTER TABLE `loaive` ENABLE KEYS */;
+LOCK TABLES `loaighe` WRITE;
+/*!40000 ALTER TABLE `loaighe` DISABLE KEYS */;
+INSERT INTO `loaighe` VALUES (1,'Ghế hạng 1',1000000),(2,'Ghế hạng 2',500000);
+/*!40000 ALTER TABLE `loaighe` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -209,7 +207,7 @@ CREATE TABLE `maybay` (
   `ghe_hang_1` int NOT NULL,
   `ghe_hang_2` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,7 +216,7 @@ CREATE TABLE `maybay` (
 
 LOCK TABLES `maybay` WRITE;
 /*!40000 ALTER TABLE `maybay` DISABLE KEYS */;
-INSERT INTO `maybay` VALUES (1,'AK47 GDucky',40,60);
+INSERT INTO `maybay` VALUES (1,'AK47 GDucky',40,60),(2,'ZUKABU YOYO',30,50);
 /*!40000 ALTER TABLE `maybay` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -242,7 +240,7 @@ CREATE TABLE `nhanvien` (
   PRIMARY KEY (`id`),
   KEY `role` (`role`),
   CONSTRAINT `nhanvien_ibfk_1` FOREIGN KEY (`role`) REFERENCES `userrole` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -251,7 +249,7 @@ CREATE TABLE `nhanvien` (
 
 LOCK TABLES `nhanvien` WRITE;
 /*!40000 ALTER TABLE `nhanvien` DISABLE KEYS */;
-INSERT INTO `nhanvien` VALUES (1,'Đặng Hoàng Bửu','Nam','2000-02-04','371 Nguyễn Kiệm','Tiền Giang','0768107704','jpeg',1),(2,'Dương Văn Tư','Nam','2000-11-15','371 Nguyễn Kiệm, Q. Gò Vấp','Tây Ninh','0935492342','/static/images/logo.png',2);
+INSERT INTO `nhanvien` VALUES (1,'Đặng Hoàng Bửu','Nam','2020-02-04','371 Nguyễn Kiệm','Tiền Giang','0768107704','jpeg',1);
 /*!40000 ALTER TABLE `nhanvien` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -278,6 +276,34 @@ LOCK TABLES `sanbay` WRITE;
 /*!40000 ALTER TABLE `sanbay` DISABLE KEYS */;
 INSERT INTO `sanbay` VALUES (1,'Tân Sơn Nhất','Hồ Chí Minh'),(2,'Nội Bài','Hà Nội'),(3,'Cam Ranh','Khánh Hòa'),(4,'Long Thành','Đồng Nai');
 /*!40000 ALTER TABLE `sanbay` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sanbaytrunggian`
+--
+
+DROP TABLE IF EXISTS `sanbaytrunggian`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `sanbaytrunggian` (
+  `id_san_bay` int NOT NULL,
+  `id_duong_bay` int NOT NULL,
+  `thoi_gian_dung` time NOT NULL,
+  PRIMARY KEY (`id_san_bay`,`id_duong_bay`),
+  KEY `id_duong_bay` (`id_duong_bay`),
+  CONSTRAINT `sanbaytrunggian_ibfk_1` FOREIGN KEY (`id_san_bay`) REFERENCES `sanbay` (`id`),
+  CONSTRAINT `sanbaytrunggian_ibfk_2` FOREIGN KEY (`id_duong_bay`) REFERENCES `duongbay` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sanbaytrunggian`
+--
+
+LOCK TABLES `sanbaytrunggian` WRITE;
+/*!40000 ALTER TABLE `sanbaytrunggian` DISABLE KEYS */;
+INSERT INTO `sanbaytrunggian` VALUES (3,1,'00:45:00');
+/*!40000 ALTER TABLE `sanbaytrunggian` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -312,21 +338,22 @@ DROP TABLE IF EXISTS `ve`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ve` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `available` tinyint(1) NOT NULL,
-  `id_loai_ve` int NOT NULL,
+  `id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ngay_xuat_ve` datetime NOT NULL,
   `id_chuyen_bay` int NOT NULL,
-  `id_don_dat_ve` int DEFAULT NULL,
+  `id_nhan_vien` int NOT NULL,
+  `id_khach_hang` int NOT NULL,
+  `id_ghe` int NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `id_loai_ve` (`id_loai_ve`),
   KEY `id_chuyen_bay` (`id_chuyen_bay`),
-  KEY `id_don_dat_ve` (`id_don_dat_ve`),
-  CONSTRAINT `ve_ibfk_1` FOREIGN KEY (`id_loai_ve`) REFERENCES `loaive` (`id`),
-  CONSTRAINT `ve_ibfk_2` FOREIGN KEY (`id_chuyen_bay`) REFERENCES `chuyenbay` (`id_chuyen_bay`),
-  CONSTRAINT `ve_ibfk_3` FOREIGN KEY (`id_don_dat_ve`) REFERENCES `dondatve` (`id_don_dat_ve`),
-  CONSTRAINT `ve_chk_1` CHECK ((`available` in (0,1)))
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  KEY `id_nhan_vien` (`id_nhan_vien`),
+  KEY `id_khach_hang` (`id_khach_hang`),
+  KEY `id_ghe` (`id_ghe`),
+  CONSTRAINT `ve_ibfk_1` FOREIGN KEY (`id_chuyen_bay`) REFERENCES `chuyenbay` (`id_chuyen_bay`),
+  CONSTRAINT `ve_ibfk_2` FOREIGN KEY (`id_nhan_vien`) REFERENCES `nhanvien` (`id`),
+  CONSTRAINT `ve_ibfk_3` FOREIGN KEY (`id_khach_hang`) REFERENCES `khachhang` (`id`),
+  CONSTRAINT `ve_ibfk_4` FOREIGN KEY (`id_ghe`) REFERENCES `ghe` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -335,7 +362,6 @@ CREATE TABLE `ve` (
 
 LOCK TABLES `ve` WRITE;
 /*!40000 ALTER TABLE `ve` DISABLE KEYS */;
-INSERT INTO `ve` VALUES (1,'TICKTUHUY1',1,1,1,1),(2,'TICKTUHUY2',1,1,1,1),(3,'TICKTUHUY3',1,2,1,1);
 /*!40000 ALTER TABLE `ve` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -348,4 +374,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-11-25 19:02:03
+-- Dump completed on 2020-11-26 22:10:31
