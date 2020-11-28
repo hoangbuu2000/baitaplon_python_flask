@@ -1,40 +1,61 @@
-======================================================================
 
-	  Website Template Name: Airlines
-	  Website Template URI: http://www.templatemonster.com/free-templates/free-website-template-airlines.php
-	  Version: 1
-	  Author: TemplateMonster.com Team
-	  Author URI: http://www.templatemonster.com/
+TITLE: 
+Travel - 100% Fully Responsive Free HTML5 Bootstrap Template
 
-======================================================================
+AUTHOR:
+DESIGNED & DEVELOPED by FREEHTML5.co
 
-
-   +++ Be sure to visit TemplateMonster.com for more website templates +++
+Website: http://freehtml5.co/
+Twitter: http://twitter.com/fh5co
+Facebook: http://facebook.com/fh5co
 
 
-   +++ License +++
+CREDITS:
 
-   Airlines website template is 100% FREE!  We kindly ask you to
-   leave the footer links intact. Thank you so much! :)
+Bootstrap
+http://getbootstrap.com/
 
-   
+jQuery
+http://jquery.com/
 
-   +++ INSTALLATION & EDITING +++
+jQuery Easing
+http://gsgd.co.uk/sandbox/jquery/easing/
 
-   - Copy all the files from the 'site' directory to the appropriate (usually 'www' or 'public_html') directory on your hosting. That's it.
-   - This template may be edited with any HTML editor. If you do not know where to get one, you may consider trying NotePad++. It can be downloaded at notepad-plus.sourceforge.net and it's free.
+Modernizr
+http://modernizr.com/
 
+Google Fonts
+https://www.google.com/fonts/
 
+Google Map
+https://maps.google.com
 
-   +++ HOW TO PUT YOUR OWN LOGO+++
+Icomoon
+https://icomoon.io/app/
 
-   You need to replace logo.png (it is located in site>images>logo.png) with your own .png file. 
+Respond JS
+https://github.com/scottjehl/Respond/blob/master/LICENSE-MIT
 
+animate.css
+http://daneden.me/animate
 
-   +++ IMPORTANT NOTICE +++
+jQuery Waypoint & Sticky
+https://github.com/imakewebthings/waypoints/blog/master/licenses.txt
 
-   TemplateMonster doesn't provide support services on free templates - including this one. We only provide support for the products that are being purchased from TemplateMonster.
-   Our free templates are produced according to the latest web standards and we’ve been trying to make the process of working with them as easy as possible, so for people with minimum web develpment 
-   experience it should be easy to work with them. 
+Superfish Menu
+http://users.tpg.com.au/j_birch/plugins/superfish/examples/
 
-   
+hoverIntent
+https://github.com/briancherne/jquery-hoverIntent
+
+Stellar Parallax
+http://markdalgleish.com/projects/stellar.js/
+
+Magnific Popup
+http://dimsemenov.com/plugins/magnific-popup/
+
+SelectFX
+http://www.codrops.com
+
+classie
+https://github.com/ded/bonzo

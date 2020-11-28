@@ -2,43 +2,53 @@
 
 
 {% block head %}
-    {{ super() }}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    {{ super() }}
 {% endblock %}
 
 {% block menu %}
-<li><a href="{{ url_for('index') }}"><span><span>About</span></span></a></li>
-<li><a href="{{ url_for('offer') }}"><span><span>Offers</span></span></a></li>
-<li><a href="{{ url_for('book') }}"><span><span>Book</span></span></a></li>
-<li><a href="{{ url_for('service') }}"><span><span>Services</span></span></a></li>
-<li><a href="{{ url_for('safety') }}"><span><span>Safety</span></span></a></li>
-<li class="end"><a href="{{ url_for('contact') }}"><span><span>Contacts</span></span></a></li>
+<li><a href="{{ url_for('index') }}"><span><span>Trang chủ</span></span></a></li>
+<li><a href="{{ url_for('offer') }}"><span><span>Chuyến bay</span></span></a></li>
+<li><a href="{{ url_for('book') }}"><span><span>Đặt vé</span></span></a></li>
+<li><a href="{{ url_for('service') }}"><span><span>Dịch vụ</span></span></a></li>
+<li><a href="{{ url_for('safety') }}"><span><span>An toàn</span></span></a></li>
+<li class="end"><a href="{{ url_for('contact') }}"><span><span>Liên hệ</span></span></a></li>
 {% endblock %}
 
 {% block content %}
-<h2 class="text-center text-primary">Register Form</h2>
+<h2 class="text-center text-primary" style="font-size:2rem;">Đăng ký</h2>
 <form action="{{ url_for('register') }}" method="post">
     {% if message %}
-        <p class="alert alert-danger">{{ message }}</p>
+        <p class="alert alert-danger" style="font-size:1.1rem">{{ message }}</p>
     {% endif %}
     <div class="form-group">
-        <label for="fullname">Full name <span class="text-danger">*</span></label>
+        <label for="id" style="font-size:1.2rem;margin-bottom:.5rem">Mã nhân viên <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="id" id="id" value="{{ id }}" readonly="True">
+    </div>
+
+    <div class="form-group">
+        <label for="fullname" style="font-size:1.2rem;margin-bottom:.5rem">Full name <span class="text-danger">*</span></label>
         <input type="text" class="form-control" name="fullname" id="fullname" value="{{ fullname }}" readonly="True">
     </div>
 
     <div class="form-group">
-        <label for="sdt">Số điện thoại <span class="text-danger">*</span></label>
+        <label for="sdt" style="font-size:1.2rem;margin-bottom:.5rem">Số điện thoại <span class="text-danger">*</span></label>
         <input type="text" class="form-control" name="sdt" id="sdt" value="{{ sdt }}" readonly="True">
     </div>
 
     <div class="form-group">
-        <label for="username">Username <span class="text-danger">*</span></label>
+        <label for="username" style="font-size:1.2rem;margin-bottom:.5rem">Username <span class="text-danger">*</span></label>
         <input type="text" class="form-control" name="username" id="username" required>
     </div>
 
     <div class="form-group">
-        <label for="password">Password <span class="text-danger">*</span></label>
+        <label for="password" style="font-size:1.2rem;margin-bottom:.5rem">Password <span class="text-danger">*</span></label>
         <input type="password" class="form-control" name="password" id="password" required>
+    </div>
+
+    <div class="form-group">
+        <label for="cf_password" style="font-size:1.2rem;margin-bottom:.5rem">Confirm Password <span class="text-danger">*</span></label>
+        <input type="password" class="form-control" name="cf_password" id="cf_password" required>
     </div>
 
     <div class="from-group clearfix">

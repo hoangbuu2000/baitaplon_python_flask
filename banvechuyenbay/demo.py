@@ -1,10 +1,42 @@
-from sqlalchemy import exc
-
-from banvechuyenbay import app, admin, login, db
+from sqlalchemy import exc, or_, and_, extract
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql.functions import count
+from banvechuyenbay import app, admin, login, db, utils
 from flask import render_template, redirect, request, url_for, session, flash
 from banvechuyenbay.models import *
 from flask_login import login_user
 import hashlib
+
+
+@app.route('/nhap/<string:lua_chon>')
+def nhap(lua_chon):
+    ve, time, data = utils.bao_cao(lua_chon=lua_chon)
+    return render_template('nhap.html', ve=ve, time=time, data=data, lua_chon=lua_chon)
+
+
+@app.route('/chuyenbay/<int:id>')
+def chi_tiet(id):
+    chuyenbay, ghe = utils.get_chuyen_bay_id(id)
+    return render_template('flight-detail.html', chuyenbay=chuyenbay, len=len(chuyenbay),
+                           ghe=ghe, count=len(ghe))
+
+
+@app.route('/chuyenbay', methods=['GET', 'POST'])
+def tim_chuyen_bay():
+    message = ""
+    if request.method == "POST":
+        noi_di = request.form.get("from")
+        noi_den = request.form.get("to")
+        ngay = request.form.get("date")
+
+        chuyenbay = utils.get_chuyen_bay(noi_di, noi_den, ngay=ngay)
+
+        if chuyenbay:
+            return render_template('flight.html', chuyenbay=chuyenbay)
+        else:
+            message = "Không có thông tin chuyến bay"
+
+    return render_template('flight.html', message=message)
 
 
 @app.route('/')
@@ -16,29 +48,37 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     message = None
+    id = request.args.get("id")
     fullname = request.args.get("fullname")
     sdt = request.args.get("sdt")
 
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
+        cf_password = request.form.get("cf_password")
+        id = request.form.get("id")
         fullname = request.form.get("fullname")
         sdt = request.form.get("sdt")
 
-        acc = Account.query.filter(Account.username == username).first()
-
-        if acc:
-            message = "Username này đã có người sử dụng"
+        if password != cf_password:
+            message = "Mật khẩu không khớp"
         else:
-            nhan_vien = NhanVien.query.filter(NhanVien.name == fullname, NhanVien.dien_thoai == sdt).first()
+            acc = Account.query.filter(Account.username == username).first()
 
-            password = hashlib.md5(password.encode("utf8")).hexdigest()
-            acc = Account(id=nhan_vien.id, username=username, password=password)
-            db.session.add(acc)
-            db.session.commit()
-            return redirect('/')
+            if acc:
+                message = "Username này đã có người sử dụng"
+            else:
+                nhan_vien = NhanVien.query.filter(NhanVien.id == id,
+                                                  NhanVien.name == fullname,
+                                                  NhanVien.dien_thoai == sdt).first()
 
-    return render_template('register.html', message=message, fullname=fullname, sdt=sdt)
+                password = hashlib.md5(password.encode("utf8")).hexdigest()
+                acc = Account(id=nhan_vien.id, username=username, password=password)
+                db.session.add(acc)
+                db.session.commit()
+                return redirect('/')
+
+    return render_template('register.html', message=message, id=id, fullname=fullname, sdt=sdt)
 
 
 # Đây là trang đăng ký thuộc sprint 2
@@ -46,16 +86,18 @@ def register():
 def register1():
     message = None
     if request.method == 'POST':
+        id = request.form.get('id')
         fullname = request.form.get('fullname')
         sdt = request.form.get('sdt')
-        nv = NhanVien.query.filter(NhanVien.name == fullname, NhanVien.dien_thoai == sdt).first()
+        nv = NhanVien.query.filter(NhanVien.name == fullname,
+                                   NhanVien.dien_thoai == sdt, NhanVien.id == id).first()
         if nv:
             if str(nv.user_role) == 'Nhân viên':
                 acc = Account.query.join(NhanVien, NhanVien.id == Account.id)\
                                 .filter(NhanVien.name == nv.name)\
                                 .add_columns(NhanVien.name, Account.username, Account.password).first()
                 if not acc:
-                    return redirect(url_for('register', fullname=fullname, sdt=sdt))
+                    return redirect(url_for('register', id=id, fullname=fullname, sdt=sdt))
                 else:
                     message = "Nhân viên này đã có tài khoản và mật khẩu"
             else:
@@ -68,31 +110,36 @@ def register1():
 # Trang giao diện của sprint 2
 @app.route('/contact')
 def contact():
-    return render_template('contacts.html')
+    return render_template('contact.html')
 
 
 # Trang giao diện của sprint 2
-@app.route('/offer')
-def offer():
-    return render_template('offers.html')
+@app.route('/blog')
+def blog():
+    return render_template('blog.html')
 
 
 # Trang giao diện của sprint 2
-@app.route('/book')
-def book():
-    return render_template('book.html')
+@app.route('/car')
+def car():
+    return render_template('car.html')
 
 
 # Trang giao diện của sprint 2
-@app.route('/service')
-def service():
-    return render_template('services.html')
+@app.route('/flight')
+def flight():
+    return render_template('flight.html')
 
 
 # Trang giao diện của sprint 2
-@app.route('/safety')
-def safety():
-    return render_template('safety.html')
+@app.route('/hotel')
+def hotel():
+    return render_template('hotel.html')
+
+
+@app.route('/vacation')
+def vacation():
+    return render_template('vacation.html')
 
 
 # SPRINT 1

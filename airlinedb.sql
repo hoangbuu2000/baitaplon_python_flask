@@ -62,7 +62,7 @@ CREATE TABLE `chuyenbay` (
   KEY `id_duong_bay` (`id_duong_bay`),
   CONSTRAINT `chuyenbay_ibfk_1` FOREIGN KEY (`id_may_bay`) REFERENCES `maybay` (`id`),
   CONSTRAINT `chuyenbay_ibfk_2` FOREIGN KEY (`id_duong_bay`) REFERENCES `duongbay` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +71,7 @@ CREATE TABLE `chuyenbay` (
 
 LOCK TABLES `chuyenbay` WRITE;
 /*!40000 ALTER TABLE `chuyenbay` DISABLE KEYS */;
-INSERT INTO `chuyenbay` VALUES (1,1,1,'2020-11-27 20:00:00','08:00:00'),(2,2,2,'2020-11-26 21:00:00','01:00:00');
+INSERT INTO `chuyenbay` VALUES (1,1,1,'2020-11-27 20:00:00','03:00:00'),(2,2,2,'2020-12-14 21:00:00','00:30:00'),(3,1,4,'2020-11-28 13:00:00','03:00:00'),(4,2,3,'2020-11-28 08:00:00','03:00:00');
 /*!40000 ALTER TABLE `chuyenbay` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,7 +92,7 @@ CREATE TABLE `duongbay` (
   KEY `id_san_bay_den` (`id_san_bay_den`),
   CONSTRAINT `duongbay_ibfk_1` FOREIGN KEY (`id_san_bay_di`) REFERENCES `sanbay` (`id`),
   CONSTRAINT `duongbay_ibfk_2` FOREIGN KEY (`id_san_bay_den`) REFERENCES `sanbay` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +101,7 @@ CREATE TABLE `duongbay` (
 
 LOCK TABLES `duongbay` WRITE;
 /*!40000 ALTER TABLE `duongbay` DISABLE KEYS */;
-INSERT INTO `duongbay` VALUES (1,1,2,1616),(2,1,4,80);
+INSERT INTO `duongbay` VALUES (1,1,2,1616),(2,1,4,80),(3,1,8,1424),(4,2,20,1600);
 /*!40000 ALTER TABLE `duongbay` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -124,7 +124,7 @@ CREATE TABLE `ghe` (
   CONSTRAINT `ghe_ibfk_1` FOREIGN KEY (`id_loai_ghe`) REFERENCES `loaighe` (`id`),
   CONSTRAINT `ghe_ibfk_2` FOREIGN KEY (`id_may_bay`) REFERENCES `maybay` (`id`),
   CONSTRAINT `ghe_chk_1` CHECK ((`available` in (0,1)))
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -133,7 +133,7 @@ CREATE TABLE `ghe` (
 
 LOCK TABLES `ghe` WRITE;
 /*!40000 ALTER TABLE `ghe` DISABLE KEYS */;
-INSERT INTO `ghe` VALUES (1,'Ghế số 1',1,1,1),(2,'Ghế số 2',1,1,1),(3,'Ghế số 3',1,1,1),(4,'Ghế số 4',1,1,1),(5,'Ghế số 5',1,1,1),(6,'Ghế số 6',1,2,1),(7,'Ghế số 7',1,2,1),(8,'Ghế số 8',1,2,1),(9,'Ghế số 9',1,2,1),(10,'Ghế số 10',1,2,1);
+INSERT INTO `ghe` VALUES (1,'Ghế số 1',1,1,1),(2,'Ghế số 2',1,1,1),(3,'Ghế số 3',1,1,1),(4,'Ghế số 4',1,1,1),(5,'Ghế số 5',1,1,1),(6,'Ghế số 6',1,1,1),(7,'Ghế số 7',1,1,1),(8,'Ghế số 8',1,1,1),(9,'Ghế số 9',1,1,1),(10,'Ghế số 10',1,1,1),(11,'Ghế số 11',1,1,1),(12,'Ghế số 12',1,1,1),(13,'Ghế số 13',1,1,1),(14,'Ghế số 14',1,1,1),(15,'Ghế số 15',1,1,1),(16,'Ghế số 16',1,1,1),(17,'Ghế số 17',1,1,1),(18,'Ghế số 18',1,1,1),(19,'Ghế số 19',1,1,1),(20,'Ghế số 20',1,1,1),(21,'Ghế số 21',1,2,1),(22,'Ghế số 22',1,2,1),(23,'Ghế số 23',1,2,1),(24,'Ghế số 24',1,2,1),(25,'Ghế số 25',1,2,1),(26,'Ghế số 26',1,2,1),(27,'Ghế số 27',1,2,1),(28,'Ghế số 28',1,2,1),(29,'Ghế số 29',1,2,1),(30,'Ghế số 30',1,2,1),(31,'Ghế số 31',1,2,1),(32,'Ghế số 32',1,2,1),(33,'Ghế số 33',1,2,1),(34,'Ghế số 34',1,2,1),(35,'Ghế số 35',1,2,1),(36,'Ghế số 36',1,2,1),(37,'Ghế số 37',1,2,1),(38,'Ghế số 38',1,2,1),(39,'Ghế số 39',1,2,1),(40,'Ghế số 40',1,2,1),(45,'Ghế số 1',1,1,2),(46,'Ghế số 2',1,1,2),(47,'Ghế số 3',1,1,2),(48,'Ghế số 4',1,1,2),(49,'Ghế số 5',1,1,2),(50,'Ghế số 6',1,1,2),(51,'Ghế số 7',1,1,2),(52,'Ghế số 8',1,1,2),(53,'Ghế số 9',1,1,2),(54,'Ghế số 10',1,1,2),(55,'Ghế số 11',1,1,2),(56,'Ghế số 12',1,1,2),(57,'Ghế số 13',1,2,2),(58,'Ghế số 14',1,2,2),(59,'Ghế số 15',1,2,2),(60,'Ghế số 16',1,2,2),(61,'Ghế số 17',1,2,2),(62,'Ghế số 18',1,2,2),(63,'Ghế số 19',1,2,2),(64,'Ghế số 20',1,2,2),(65,'Ghế số 21',1,2,2),(66,'Ghế số 22',1,2,2),(67,'Ghế số 23',1,2,2),(68,'Ghế số 24',1,2,2),(69,'Ghế số 25',1,2,2),(70,'Ghế số 26',1,2,2),(71,'Ghế số 27',1,2,2),(72,'Ghế số 28',1,2,2),(73,'Ghế số 29',1,2,2),(74,'Ghế số 30',1,2,2),(75,'Ghế số 31',1,2,2),(76,'Ghế số 32',1,2,2);
 /*!40000 ALTER TABLE `ghe` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -156,7 +156,7 @@ CREATE TABLE `khachhang` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `Cmnd` (`Cmnd`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,7 +165,7 @@ CREATE TABLE `khachhang` (
 
 LOCK TABLES `khachhang` WRITE;
 /*!40000 ALTER TABLE `khachhang` DISABLE KEYS */;
-INSERT INTO `khachhang` VALUES (1,'Trần Phấn Huy','Nam','2000-02-04','123456789101','371 Nguyễn Kiệm, Q. Gò Vấp','0768107705','huybelta1234@gmail.com');
+INSERT INTO `khachhang` VALUES (1,'Trần Phấn Huy','Nam','2000-02-04','123456789101','371 Nguyễn Kiệm, Q. Gò Vấp','0768107705','huybelta1234@gmail.com'),(2,'Nguyễn Đỗ Trọng','Nam','2000-05-05','079211115643','371 Nguyễn Kiệm, Q. Gò Vấp','0303033034','trongdo11@gmail.com');
 /*!40000 ALTER TABLE `khachhang` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -216,7 +216,7 @@ CREATE TABLE `maybay` (
 
 LOCK TABLES `maybay` WRITE;
 /*!40000 ALTER TABLE `maybay` DISABLE KEYS */;
-INSERT INTO `maybay` VALUES (1,'AK47 GDucky',40,60),(2,'ZUKABU YOYO',30,50);
+INSERT INTO `maybay` VALUES (1,'AK47 GDucky',20,20),(2,'ZUKABU YOYO',12,20);
 /*!40000 ALTER TABLE `maybay` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -265,7 +265,7 @@ CREATE TABLE `sanbay` (
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `vi_tri` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -274,7 +274,7 @@ CREATE TABLE `sanbay` (
 
 LOCK TABLES `sanbay` WRITE;
 /*!40000 ALTER TABLE `sanbay` DISABLE KEYS */;
-INSERT INTO `sanbay` VALUES (1,'Tân Sơn Nhất','Hồ Chí Minh'),(2,'Nội Bài','Hà Nội'),(3,'Cam Ranh','Khánh Hòa'),(4,'Long Thành','Đồng Nai');
+INSERT INTO `sanbay` VALUES (1,'Tân Sơn Nhất','Hồ Chí Minh'),(2,'Nội Bài','Hà Nội'),(3,'Cam Ranh','Khánh Hòa'),(4,'Long Thành','Đồng Nai'),(5,'Cát Bi','Hải Phòng'),(6,'Điện Biên Phủ','Điện Biên'),(7,'Thọ Xuân','Thanh Hóa'),(8,'Vinh','Nghệ An'),(9,'Đồng Hới','Quảng Bình'),(10,'Phú Bài','Thừa Thiên - Huế'),(11,'Đà Nẵng','Đà Nẵng'),(12,'Chu Lai','Quảng Nam'),(13,'Phù Cát','Bình Định'),(14,'Tuy Hòa','Phú Yên'),(15,'Buôn Ma Thuột','Đắk Lắk'),(16,'Liên Khương','Lâm Đồng'),(17,'Pleiku','Gia Lai'),(18,'Cà Mau','Cà Mau'),(19,'Côn Đảo','Bà Rịa - Vũng Tàu'),(20,'Cần Thơ','Cần Thơ'),(21,'Rạch Giá','Kiên Giang'),(22,'Phú Quốc','Kiên Giang'),(23,'Vân Đồn','Quảng Ninh');
 /*!40000 ALTER TABLE `sanbay` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -302,7 +302,7 @@ CREATE TABLE `sanbaytrunggian` (
 
 LOCK TABLES `sanbaytrunggian` WRITE;
 /*!40000 ALTER TABLE `sanbaytrunggian` DISABLE KEYS */;
-INSERT INTO `sanbaytrunggian` VALUES (3,1,'00:45:00');
+INSERT INTO `sanbaytrunggian` VALUES (1,4,'00:10:00'),(3,1,'00:20:00');
 /*!40000 ALTER TABLE `sanbaytrunggian` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -362,6 +362,7 @@ CREATE TABLE `ve` (
 
 LOCK TABLES `ve` WRITE;
 /*!40000 ALTER TABLE `ve` DISABLE KEYS */;
+INSERT INTO `ve` VALUES ('ABCXYZ','2020-11-27 12:16:55',1,1,1,1),('CCCCC','2020-11-27 14:51:58',1,1,1,2),('SGDN1','2020-12-01 15:00:00',2,1,1,45),('SGDN2','2020-12-08 15:10:00',2,1,1,46),('SGDN3','2020-12-09 15:08:14',2,1,1,47),('SGDN4','2020-12-10 09:17:00',2,1,2,48),('SGDN5','2020-12-10 10:00:00',2,1,2,49),('SGHN1','2021-11-10 19:11:35',1,1,1,1);
 /*!40000 ALTER TABLE `ve` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -374,4 +375,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-11-26 22:10:31
+-- Dump completed on 2020-11-27 20:36:36

@@ -1,3 +1,4 @@
+from flask_admin.contrib.sqla.ajax import QueryAjaxModelLoader
 from flask_admin.helpers import validate_form_on_submit
 from wtforms import PasswordField, ValidationError
 from wtforms.validators import DataRequired
@@ -33,9 +34,8 @@ class MayBayModelView(ModelTemplate):
 
 
 class DuongBayModelView(ModelTemplate):
-    form_columns = ('san_bay_di', 'san_bay_den', 'san_bay_trung_gian', 'thoi_gian_dung', 'khoang_cach',)
+    form_columns = ('san_bay_di', 'san_bay_den', 'khoang_cach',)
     column_labels = dict(san_bay_di='Sân bay đi', san_bay_den='Sân bay đến',
-                         san_bay_trung_gian='Sân bay trung gian', thoi_gian_dung='Thời gian dừng',
                          khoang_cach='Khoảng cách (km)',)
 
 
@@ -51,15 +51,23 @@ class SanBayModelView(ModelTemplate):
     column_labels = dict(name='Tên sân bay', vi_tri='Vị trí sân bay',)
 
 
+class SanBayTrungGianModelView(ModelTemplate):
+    form_columns = ('san_bay', 'duong_bay', 'thoi_gian_dung',)
+    column_labels = dict(san_bay='Sân bay trung gian', duong_bay='Đường bay', thoi_gian_dung='Thời gian dừng',)
+    column_list = ('san_bay', 'duong_bay', 'thoi_gian_dung',)
+
+
 class UserRoleModelView(ModelTemplate):
     form_columns = ('name',)
     column_labels = dict(name='Vai trò',)
 
 
 class NhanVienModelView(ModelTemplate):
-    form_columns = ('name', 'gioi_tinh', 'ngay_sinh', 'dia_chi', 'que_quan', 'dien_thoai',
+    form_columns = ('id', 'name', 'gioi_tinh', 'ngay_sinh', 'dia_chi', 'que_quan', 'dien_thoai',
                     'avatar', 'user_role',)
-    column_labels = dict(name='Họ tên', gioi_tinh='Giới tính', ngay_sinh='Ngày sinh',
+    form_edit_rules = ('name', 'gioi_tinh', 'ngay_sinh', 'dia_chi', 'que_quan', 'dien_thoai',
+                    'avatar', 'user_role',)
+    column_labels = dict(id='Mã nhân viên', name='Họ tên', gioi_tinh='Giới tính', ngay_sinh='Ngày sinh',
                          dia_chi='Địa chỉ', que_quan='Quê quán', dien_thoai='Điện thoại',
                          avatar='Ảnh đại diện', user_role='Vai trò',)
 
@@ -73,7 +81,7 @@ class KhachHangModelView(ModelTemplate):
 
 class AccountModelView(ModelTemplate):
     column_list = ('username', 'active', 'nhan_vien',)
-    form_edit_rules = ('username', 'active', 'nhan_vien',)
+    form_edit_rules = ('username', 'active',)
     form_create_rules = ('username', 'password', 'active', 'nhan_vien',)
     form_extra_fields = {
         'password': PasswordField('Password')
@@ -88,16 +96,22 @@ class DonDatVeModelView(ModelTemplate):
                          ngay_dat_ve='Ngày đặt vé', ve='Vé',)
 
 
-class LoaiVeModelView(ModelTemplate):
+class GheModelView(ModelTemplate):
+    form_columns = ('name', 'available', 'may_bay', 'loai_ghe')
+    column_labels = dict(name='Tên ghế', available='Available', may_bay='Máy bay', loai_ghe='Loại ghế',)
+
+
+class LoaiGheModelView(ModelTemplate):
     form_columns = ('name', 'don_gia',)
-    column_labels = dict(name='Tên hạng vé', don_gia='Đơn giá',)
+    column_labels = dict(name='Tên hạng ghế', don_gia='Đơn giá',)
 
 
 class VeModelView(ModelTemplate):
-    form_columns = ('name', 'chuyen_bay', 'loai_ve', 'available',)
-    column_list = ('name', 'chuyen_bay', 'loai_ve', 'available',)
-    column_labels = dict(name='Tên vé', chuyen_bay='Tên chuyến bay', loai_ve='Hạng vé',
-                         available="Available",)
+    form_columns = ('id', 'chuyen_bay', 'nhan_vien', 'khach_hang', 'ghe', 'ngay_xuat_ve',)
+    column_list = ('id', 'chuyen_bay', 'nhan_vien', 'khach_hang', 'ghe', 'ngay_xuat_ve',)
+    column_labels = dict(id='Mã vé', ngay_xuat_ve='Ngày xuất vé',
+                         chuyen_bay='Tên chuyến bay', nhan_vien='Nhân viên',
+                         khach_hang='Khách hàng', ghe='Ghế')
 
 
 # Định nghĩa 1 view mới không liên quan đến các models để hiển thị cách sử dụng cho người dùng
@@ -122,14 +136,15 @@ group3 = "Ticket"
 
 ad.add_view(MayBayModelView(MayBay, db.session, category=group1, name="Máy bay"))
 ad.add_view(SanBayModelView(SanBay, db.session, category=group1, name="Sân bay"))
+ad.add_view(LoaiGheModelView(LoaiGhe, db.session, category=group1, name="Loại ghế́"))
+ad.add_view(GheModelView(Ghe, db.session, category=group1, name="Ghế"))
 ad.add_view(DuongBayModelView(DuongBay, db.session, category=group1, name="Đường bay"))
+ad.add_view(SanBayTrungGianModelView(SanBayTrungGian, db.session, category=group1, name="Sân bay trung gian"))
 ad.add_view(ChuyenBayModelView(ChuyenBay, db.session, category=group1, name="Chuyến bay"))
 ad.add_view(UserRoleModelView(UserRole, db.session, category=group2, name="Vai trò người dùng"))
 ad.add_view(NhanVienModelView(NhanVien, db.session, category=group2, name="Nhân viên"))
 ad.add_view(AccountModelView(Account, db.session, category=group2, name='Account'))
 ad.add_view(KhachHangModelView(KhachHang, db.session, category=group2, name="Khách hàng"))
-ad.add_view(LoaiVeModelView(LoaiVe, db.session, category=group3, name="Loại vé"))
-ad.add_view(DonDatVeModelView(DonDatVe, db.session, category=group3, name="Đơn đặt vé"))
 ad.add_view(VeModelView(Ve, db.session, category=group3, name="Vé"))
 ad.add_view(HelperView(name="Hướng dẫn sử dụng"))
 ad.add_view(LogoutView(name="Đăng xuất"))

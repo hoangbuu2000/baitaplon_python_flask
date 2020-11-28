@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    {% if chuyenbay %}
+    <h2 class="text-primary text-center">Lịch chuyến bay</h2>
+    <table class="table table-bordered">
+        <tr>
+            <td>Mã chuyến bay</td>
+            <td>Sân bay đi</td>
+            <td>Sân bay đến</td>
+            <td>Ngày - giờ</td>
+            <td>Thời gian bay</td>
+            <td>Số lượng ghế hạng 1</td>
+            <td>Số lượng ghế hạng 2</td>
+            <td>Sân bay trung gian</td>
+            <td>Thời gian dừng</td>
+        </tr>
+        <tr>
+            {% if len %}
+                <td>{{ chuyenbay[0].id_chuyen_bay }}</td>
+                <td>{{ chuyenbay[0].sanbaydi }}</td>
+                <td>{{ chuyenbay[0].sanbayden }}</td>
+                <td>{{ chuyenbay[0].ngay_khoi_hanh }}</td>
+                <td>{{ chuyenbay[0].thoi_gian_bay }}</td>
+                <td>{{ chuyenbay[0].ghe_hang_1 }}</td>
+                <td>{{ chuyenbay[0].ghe_hang_2 }}</td>
+
+                <td>
+                    {{ chuyenbay[0].sanbaytrunggian }}
+                    {% if len > 1 %}
+                        -
+                        {% if chuyenbay[1].sanbaytrunggian %}
+                            {{ chuyenbay[1].sanbaytrunggian }}
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    {{ chuyenbay[0].thoi_gian_dung }}
+                    {% if len > 1 %}
+                        -
+                        {% if chuyenbay[1].sanbaytrunggian %}
+                            {{ chuyenbay[1].thoi_gian_dung }}
+                        {% endif %}
+                    {% endif %}
+                </td>
+            {% else %}
+                <td>{{ chuyenbay.id_chuyen_bay }}</td>
+                <td>{{ chuyenbay.sanbaydi }}</td>
+                <td>{{ chuyenbay.sanbayden }}</td>
+                <td>{{ chuyenbay.ngay_khoi_hanh }}</td>
+                <td>{{ chuyenbay.thoi_gian_bay }}</td>
+                <td>{{ chuyenbay.ghe_hang_1 }}</td>
+                <td>{{ chuyenbay.ghe_hang_2 }}</td>
+
+                <td>
+
+                </td>
+                <td>
+
+                </td>
+            {% endif %}
+        </tr>
+    </table>
+
+    <div class="row m-0">
+        <table class="table-responsive text-center col-sm-6" style="margin-top: 100px;">
+            <tr>
+                <td colspan="6"><img src="{{ url_for('static', filename='images/chongoi.jpg') }}" alt="" width="50%">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>A</td>
+                <td>B</td>
+                <td>C</td>
+                <td>D</td>
+                <td></td>
+            </tr>
+            <!-- Mỗi hàng là 4 ghế nên duyệt vòng lặp lấy tổng số ghế chia cho 4 !-->
+            {% for i in range(0, (count // 4)) %}
+            <tr>
+                <td>{{ i + 1 }}</td>
+                {% for j in range(i * 4, i * 4 + 4) %}
+                {% if ghe[j].hang_ghe == 'Ghế hạng 1' %}
+                <td class="text-danger" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
+                {% else %}
+                <td class="text-primary" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
+                {% endif %}
+                {% endfor %}
+                <td>{{ i + 1 }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td></td>
+                <td>A</td>
+                <td>B</td>
+                <td>C</td>
+                <td>D</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="6"><img src="{{ url_for('static', filename='images/chongoi1.png') }}" alt=""></td>
+            </tr>
+        </table>
+
+        <div class="col-sm-6" style="margin-top:200px;">
+            <p><span class="btn btn-danger"></span> - Ghế hạng 1</p>
+            <p><span class="btn btn-primary"></span> - Ghế hạng 2</p>
+        </div>
+    </div>
+
+
+
+    {% endif %}
+</body>
+</html>
