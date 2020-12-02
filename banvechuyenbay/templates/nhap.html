@@ -7,10 +7,69 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 </head>
 <body>
+    {% if nam and not thang %}
+        <div class="container">
+            <table class="table table-bordered" style="width:100%">
+                <tr>
+                    <th colspan="5"><h2 class="text-center">Báo cáo doanh thu năm</h2></th>
+                </tr>
+                <tr>
+                    <td colspan="5" class="text-center">Năm: {{ nam }}</td>
+                </tr>
+                <tr>
+                    <td>STT</td>
+                    <td>Tháng</td>
+                    <td>Số chuyến bay</td>
+                    <td>Doanh thu</td>
+                    <td>Tỷ lệ</td>
+                </tr>
+                {% if chuyenbay %}
+                    {% for i in range(len) %}
+                        <tr>
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ chuyenbay[i].thang }}</td>
+                            <td>{{ chuyenbay[i].so_luong }}</td>
+                            <td>{{ chuyenbay[i].doanh_thu }}</td>
+                            <td>{{ "{:.2f}".format(chuyenbay[i].doanh_thu * 100 / tong_doanh_thu) }}%</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </table>
+        </div>
+    {% elif nam and thang %}
+        <div class="container">
+            <table class="table table-bordered" style="width:100%">
+                <tr>
+                    <th colspan="5"><h2 class="text-center">Báo Cáo Doanh Thu Bán Vé Các Chuyến Bay</h2></th>
+                </tr>
+                <tr>
+                    <td colspan="5" class="text-center">Tháng: {{ thang }}</td>
+                </tr>
+                <tr>
+                    <td>STT</td>
+                    <td>Chuyến bay</td>
+                    <td>Số vé</td>
+                    <td>Tỷ lệ</td>
+                    <td>Doanh thu</td>
+                </tr>
+                {% if chuyenbay %}
+                    {% for i in range(len) %}
+                        <tr>
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ chuyenbay[i].chuyen_bay }}</td>
+                            <td>{{ chuyenbay[i].so_luong_ve }}</td>
+                            <td>{{ "{:.2f}".format(chuyenbay[i].doanh_thu * 100 / tong_doanh_thu) }}%</td>
+                            <td>{{ chuyenbay[i].doanh_thu }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </table>
+        </div>
+    {% endif %}
     <canvas id="myChart" width="400" height="400"></canvas>
-
     <script>
         var ctx = document.getElementById('myChart');
         var myChart = new Chart(ctx, {

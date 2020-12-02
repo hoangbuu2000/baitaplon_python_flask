@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    <form action="test" method="post">
+        <div class="form-group container">
+            <table class="table table-bordered" style="width:100%">
+                <tr>
+                    <th colspan="5"><h2 class="text-center">Báo cáo doanh thu năm</h2></th>
+                </tr>
+                <tr>
+                    <td colspan="5" class="text-center">Năm: {{ nam }}</td>
+                </tr>
+                <tr>
+                    <td>STT</td>
+                    <td>Tháng</td>
+                    <td>Số chuyến bay</td>
+                    <td>Doanh thu</td>
+                    <td>Tỷ lệ</td>
+                </tr>
+                {% if chuyenbay %}
+                    {% for i in range(len) %}
+                        <tr>
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ chuyenbay[i].thang }}</td>
+                            <td>{{ chuyenbay[i].so_luong }}</td>
+                            <td>{{ chuyenbay[i].doanh_thu }}</td>
+                            <td>{{ "{:.2f}".format(chuyenbay[i].doanh_thu * 100 / tong_doanh_thu) }}%</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </table>
+        </div>
+    </form>
+</body>
+</html>

@@ -154,6 +154,7 @@ class Ghe(BaseModel):
     def __str__(self):
         return "%s - %s" %(str(self.name), str(self.may_bay))
 
+
 class Ve(db.Model):
     __tablename__ = "ve"
 

@@ -7,11 +7,24 @@ from banvechuyenbay.models import *
 from flask_login import login_user
 import hashlib
 
-
-@app.route('/nhap/<string:lua_chon>')
-def nhap(lua_chon):
+# xem lại
+@app.route('/nhap/<string:lua_chon>', defaults={'nam': None, 'thang': None})
+@app.route('/nhap/<string:lua_chon>/<string:nam>/<string:thang>')
+def nhap(lua_chon, nam, thang):
     ve, time, data = utils.bao_cao(lua_chon=lua_chon)
-    return render_template('nhap.html', ve=ve, time=time, data=data, lua_chon=lua_chon)
+
+    if nam and not thang:
+        chuyenbay = utils.bao_cao_theo_mau(nam=nam, thang=None)
+    if nam and thang:
+        chuyenbay = utils.bao_cao_theo_mau(nam=nam, thang=thang)
+
+    tong_doanh_thu = 0
+    for cb in chuyenbay:
+        tong_doanh_thu = tong_doanh_thu + cb.doanh_thu
+
+    return render_template('nhap.html', chuyenbay=chuyenbay, nam=nam, thang=thang
+                           , len=len(chuyenbay), tong_doanh_thu=tong_doanh_thu
+                           , ve=ve, time=time, data=data, lua_chon=lua_chon)
 
 
 @app.route('/chuyenbay/<int:id>')
