@@ -1,7 +1,7 @@
 from flask_admin.contrib.sqla.ajax import QueryAjaxModelLoader
 from flask_admin.helpers import validate_form_on_submit
 from wtforms import PasswordField, ValidationError
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, AnyOf
 
 from banvechuyenbay import ad, db
 from banvechuyenbay.models import *
@@ -31,6 +31,39 @@ class MayBayModelView(ModelTemplate):
     form_columns = ('name', 'ghe_hang_1', 'ghe_hang_2',)
     column_labels = dict(name='Tên máy bay', ghe_hang_1="Số lượng ghế hạng 1",
                          ghe_hang_2="Số lượng ghế hạng 2",)
+
+    def create_model(self, form):
+        maybay = MayBay()
+        form.populate_obj(maybay)
+
+        list = []
+        for i in range(maybay.ghe_hang_1):
+            ghe = Ghe()
+            ghe.name = 'Ghế số ' + str(i + 1)
+            ghe.available = True
+            ghe.id_loai_ghe = 1
+            ghe.id_may_bay = maybay.id
+
+            list.append(ghe)
+
+            maybay.ghe = list
+            self.session.add(maybay)
+            self.session.commit()
+
+        for i in range(maybay.ghe_hang_1, maybay.ghe_hang_1 + maybay.ghe_hang_2):
+            ghe = Ghe()
+            ghe.name = 'Ghế số ' + str(i + 1)
+            ghe.available = True
+            ghe.id_loai_ghe = 2
+            ghe.id_may_bay = maybay.id
+
+            list.append(ghe)
+
+            maybay.ghe = list
+            self.session.add(maybay)
+            self.session.commit()
+
+        return True
 
 
 class DuongBayModelView(ModelTemplate):
@@ -113,6 +146,20 @@ class VeModelView(ModelTemplate):
                          chuyen_bay='Tên chuyến bay', nhan_vien='Nhân viên',
                          khach_hang='Khách hàng', ghe='Ghế')
 
+    # ghe = []
+    # list = Ghe.query.join(MayBay, MayBay.id == Ghe.id_may_bay)\
+    #                 .join(ChuyenBay, ChuyenBay.id_may_bay == MayBay.id)\
+    #                 .filter(ChuyenBay.id_chuyen_bay == 1)\
+    #                 .add_columns(Ghe.name).all()
+    # if list:
+    #     for l in list:
+    #         ghe.append(l.name)
+    # form_args = {
+    #     'ghe': {
+    #         'validators': [AnyOf(ghe)]
+    #     }
+    # }
+
 
 # Định nghĩa 1 view mới không liên quan đến các models để hiển thị cách sử dụng cho người dùng
 class HelperView(AccessibleView):
@@ -124,8 +171,18 @@ class HelperView(AccessibleView):
 class LogoutView(AccessibleView):
     @expose('/')
     def index(self):
+        user = current_user
+        user.authenticated = False
+        db.session.add(user)
+        db.session.commit()
         logout_user()
         return redirect('/admin')
+
+
+class ThongKeView(AccessibleView):
+    @expose('/')
+    def index(self):
+        return self.render('admin/thongke.html')
 
 
 # Nhóm các view model liên quan
@@ -145,6 +202,7 @@ ad.add_view(UserRoleModelView(UserRole, db.session, category=group2, name="Vai t
 ad.add_view(NhanVienModelView(NhanVien, db.session, category=group2, name="Nhân viên"))
 ad.add_view(AccountModelView(Account, db.session, category=group2, name='Account'))
 ad.add_view(KhachHangModelView(KhachHang, db.session, category=group2, name="Khách hàng"))
-ad.add_view(VeModelView(Ve, db.session, category=group3, name="Vé"))
+ad.add_view(VeModelView(Ve, db.session, name="Vé"))
+ad.add_view(ThongKeView(name="Thống kê"))
 ad.add_view(HelperView(name="Hướng dẫn sử dụng"))
 ad.add_view(LogoutView(name="Đăng xuất"))

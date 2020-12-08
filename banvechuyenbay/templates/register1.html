@@ -1,29 +1,43 @@
-{% extends 'register.html' %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Xác thực nhân viên</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+</head>
+<body>
+    {% block body %}
+    <h2 class="text-center text-primary" style="font-size:2rem;">Xác thực nhân viên</h2>
+    <form action="{{ url_for('register1') }}" method="post">
 
-{% block content %}
-<h2 class="text-center text-primary" style="font-size:2rem;">Xác thực nhân viên</h2>
-<form action="{{ url_for('register1') }}" method="post">
-
-    {% if message %}
+        {% if message %}
         <p class="alert alert-danger" style="font-size:1.1rem">{{ message }}</p>
-    {% endif %}
-    <div class="form-group">
-        <label for="id" style="font-size:1.2rem;margin-bottom:.5rem">Mã nhân viên <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" name="id" id="id" required>
-    </div>
+        {% endif %}
+        <div class="form-group">
+            <label for="id" style="font-size:1.2rem;margin-bottom:.5rem">Mã nhân viên <span
+                    class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="id" id="id" required>
+        </div>
 
-    <div class="form-group">
-        <label for="fullname" style="font-size:1.2rem;margin-bottom:.5rem">Họ tên <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" name="fullname" id="fullname" required>
-    </div>
+        <div class="form-group">
+            <label for="fullname" style="font-size:1.2rem;margin-bottom:.5rem">Họ tên <span
+                    class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="fullname" id="fullname" required>
+        </div>
 
-    <div class="form-group">
-        <label for="sdt" style="font-size:1.2rem;margin-bottom:.5rem">Số điện thoại <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" name="sdt" id="sdt" required>
-    </div>
+        <div class="form-group">
+            <label for="sdt" style="font-size:1.2rem;margin-bottom:.5rem">Số điện thoại <span
+                    class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="sdt" id="sdt" required>
+        </div>
 
-    <div class="from-group clearfix">
-        <input type="submit" class="btn btn-primary right" value="Tiếp tục">
-    </div>
-</form>
-{% endblock %}
+        <div class="from-group clearfix">
+            <input type="submit" class="btn btn-primary right" value="Tiếp tục">
+        </div>
+    </form>
+    {% endblock %}
+</body>
+</html>

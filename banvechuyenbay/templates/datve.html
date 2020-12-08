@@ -1,0 +1,110 @@
+{% extends 'index.html' %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <a class="navbar-brand" href="
+    {% if current_user.is_authenticated and not khach_hang %}
+    {{ url_for('index1') }}
+    {% else %}
+    {{ url_for('index') }}
+    {% endif %}
+    ">FORBEE</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="
+                {% if current_user.is_authenticated and not khach_hang %}
+                {{ url_for('index1') }}
+                {% else %}
+                {{ url_for('index') }}
+                {% endif %}
+                ">Trang chủ <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('tim_chuyen_bay') }}">Chuyến bay</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Đặt vé</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Liên hệ</a>
+            </li>
+            {% if current_user.is_authenticated and not khach_hang %}
+            <!--                <li><a class="text-light btn btn-primary" href="{{ url_for('register1') }}">Đăng ký</a></li>-->
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Đăng xuất</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('confirm') }}">Ghi nhận đặt vé</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="row m-0" style="margin-top:30px !important">
+    <div class="col-md-7">
+        <h1>Thông tin hành khách</h1>
+        <form action="{{ url_for('datve') }}" method="post">
+            <div class="form-group">
+                <label for="">Tên hành khách</label>
+                <input type="text" name="fullname" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="">Giới tính</label>
+                <input type="text" name="gioi_tinh" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="">Ngày sinh</label>
+                <input type="date" name="ngay_sinh" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="">Căn cước công dân</label>
+                <input type="text" name="cmnd" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="">Địa chỉ</label>
+                <input type="text" name="dia_chi" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="">Điện thoại</label>
+                <input type="text" name="dien_thoai" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="">Email</label>
+                <input type="text" name="email" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" class="form-control btn btn-primary">
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-5"
+         style="background: linear-gradient(0deg, rgba(137, 196, 244, 0.2),
+                rgba(34, 167, 240, 0.3)), url({{ url_for('static', filename='images/mt-1307-content-bg02.jpg') }});
+                padding: 20px 50px">
+        {% if chuyen_bay %}
+        <h3>Chuyến bay hành khách đã chọn</h3>
+        <p>Từ: {{ chuyen_bay.duong_bay.san_bay_di.vi_tri }}</p>
+        <p>Đến: {{ chuyen_bay.duong_bay.san_bay_den.vi_tri }}</p>
+        <p>Sân bay đi: {{ chuyen_bay.duong_bay.san_bay_di.name }}</p>
+        <p>Sân bay đến: {{ chuyen_bay.duong_bay.san_bay_den.name }}</p>
+        <p>Tên ghế: {{ ghe.name }}</p>
+        <p>Loại ghế: {{ ghe.loai_ghe.name }}</p>
+        <p>Thành tiền: {{ "{:,.0f}".format(ghe.loai_ghe.don_gia * chuyen_bay.duong_bay.khoang_cach) }} VND</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

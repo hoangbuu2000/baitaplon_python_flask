@@ -1,0 +1,117 @@
+{% extends 'index.html' %}
+
+{% block title %}
+<title>Ghi nhận đặt vé</title>
+{% endblock %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+  <a class="navbar-brand" href="
+  {% if current_user.is_authenticated and not khach_hang %}
+  {{ url_for('index1') }}
+  {% else %}
+  {{ url_for('index') }}
+  {% endif %}
+  ">FORBEE</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="
+        {% if current_user.is_authenticated and not khach_hang %}
+        {{ url_for('index1') }}
+        {% else %}
+        {{ url_for('index') }}
+        {% endif %}
+        ">Trang chủ <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('tim_chuyen_bay') }}">Chuyến bay</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Đặt vé</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Liên hệ</a>
+      </li>
+      {% if current_user.is_authenticated and not khach_hang %}
+      <!--                <li><a class="text-light btn btn-primary" href="{{ url_for('register1') }}">Đăng ký</a></li>-->
+      <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Đăng xuất</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Profile</a></li>
+      <li class="nav-item"><a class="nav-link active" href="{{ url_for('confirm') }}">Ghi nhận đặt vé</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+  <h2 class="text-center" style="margin-top:20px">Danh sách đơn đặt vé chờ xác nhận</h2>
+
+  <table class="table table-responsive-md">
+    <tr>
+      <td>Khách hàng</td>
+      <td>Giới tính</td>
+      <td>Ngày sinh</td>
+      <td>CMND</td>
+      <td>Địa chỉ</td>
+      <td>Điện thoại</td>
+      <td>Email</td>
+      <td>Ghế</td>
+      <td>Chuyến bay</td>
+      <td>Đường bay</td>
+      <td>Máy bay</td>
+    </tr>
+
+      <form action="{{ url_for('confirm') }}" method="post" id="myForm">
+          {% for i in range(session['order'] | length) %}
+          <input type="hidden" name="order" value="{{ i + 1 }}">
+          <tr>
+            <td>{{ session['order'][(i + 1) | string()]['fullname'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['gioitinh'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['ngaysinh'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['cmnd'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['diachi'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['dienthoai'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['email'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['ghe'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['chuyenbay'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['duongbay'] }}</td>
+            <td>{{ session['order'][(i + 1) | string()]['maybay'] }}</td>
+                <td>
+                  <input type="hidden" name="success" id="success" value="" >
+                  <a class="button" href="javascript:" data-value="success"><i class="fa fa-check-circle text-success"></i></a>
+                </td>
+                <td>
+                  <input type="hidden" name="fail" id="fail" value="" >
+                  <a class="button" href="javascript:" data-value="fail"><i class="fa fa-times text-danger"></i></a>
+                </td>
+
+          </tr>
+          {% endfor %}
+      </form>
+
+
+  </table>
+
+{% endblock %}
+
+{% block js %}
+<script>
+  $(document).ready(function() {
+      $(".button").click(function(){
+        if ($(this).attr('data-value') == 'success'){
+          $("#success").val($(this).attr('data-value'));
+        }
+        else if ($(this).attr('data-value') == 'fail'){
+          $("#fail").val($(this).attr('data-value'));
+        }
+        $("#myForm").submit();
+      });
+  });
+</script>
+{% endblock %}

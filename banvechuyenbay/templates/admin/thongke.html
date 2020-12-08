@@ -1,0 +1,234 @@
+{% extends 'admin/master.html' %}
+
+{% block head_css %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/my_flask_admin.css') }}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js" integrity="sha512-gYUM+7JjtBqPPGOgwgOZ+NwjGl+11/EP124oB+ihjlBpLgP5LTh7R/Iwcdy//cgH+QzrjspBiJI5iUegTNww3w==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.min.js" integrity="sha512-VIF8OqBWob/wmCvrcQs27IrQWwgr3g+iA4QQ4hH/YeuYBIoAUluiwr/NX5WQAQgUaVx39hs6l05cEOIGEB+dmA==" crossorigin="anonymous"></script>
+
+
+<script>
+    $(document).ready(function(){
+      $("#r-year").click(function(){
+        $("#year").show();
+        $("#month").hide();
+        $("#quarter").hide();
+      });
+      $("#r-month").click(function(){
+        $("#year").show();
+        $("#month").show();
+        $("#quarter").hide();
+      });
+      $("#r-quarter").click(function(){
+        $("#year").show();
+        $("#quarter").show();
+        $("#month").hide();
+      });
+    });
+
+
+    function genPDF(){
+        $('#hide').hide();
+
+        html2canvas(document.getElementById("export"), {
+            onrendered: function (canvas) {
+                var data = canvas.toDataURL("image/png");
+                var doc = new jsPDF('p', 'mm', [950, 1200]); //950mm wide and 1200mm high
+
+                doc.addImage(data, 'PNG', 10, 10);
+                window.open(doc.output('bloburl', { filename: 'ThongKe.pdf' }), '_blank');
+            }
+        });
+
+        setTimeout(function () {
+            $("#hide").show();
+        }, 2000);
+
+    }
+</script>
+{% endblock %}
+
+{% block body %}
+<form action="{{ url_for('thongke') }}" method="post">
+    <div class="form-group">
+        <input type="radio" name="options" id="r-year" value="year"> Năm
+        <input type="radio" name="options" id="r-month" value="month"> Tháng
+        <input type="radio" name="options" id="r-quarter" value="quarter"> Quý
+    </div>
+
+    <div class="form-group">
+        <input type="text" name="year" id="year" class="form-control" placeholder="Nhap nam" style="display:none">
+        <input type="text" name="month" id="month" class="form-control" placeholder="Nhap thang" style="display:none">
+        <input type="text" name="quarter" id="quarter" class="form-control" placeholder="Nhap quy" style="display:none">
+    </div>
+
+    <div class="form-group">
+        <input type="submit" class="btn btn-primary" value="Thống kê">
+    </div>
+</form>
+
+<div id="export">
+    {% if nam and not thang and not quy %}
+    <a href="javascript:genPDF()" class="btn btn-danger" id="hide" style="margin-bottom:20px">Export PDF</a>
+    <div class="container">
+        <table class="table table-bordered" style="width:100%">
+            <tr>
+                <th colspan="5"><h2 class="text-center">Báo cáo doanh thu năm</h2></th>
+            </tr>
+            <tr>
+                <td colspan="5" class="text-center">Năm: {{ nam }}</td>
+            </tr>
+            <tr>
+                <td>STT</td>
+                <td>Tháng</td>
+                <td>Số chuyến bay</td>
+                <td>Doanh thu</td>
+                <td>Tỷ lệ</td>
+            </tr>
+            {% if chuyenbay %}
+            {% for i in range(len) %}
+            <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ chuyenbay[i].thang }}</td>
+                <td>{{ chuyenbay[i].so_luong }}</td>
+                <td>{{ "{:,.0f}".format(chuyenbay[i].doanh_thu) }} VNĐ</td>
+                <td>{{ "{:.2f}".format(chuyenbay[i].doanh_thu * 100 / tong_doanh_thu) }}%</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+    {% elif nam and thang %}
+    <a href="javascript:genPDF()" class="btn btn-danger" id="hide" style="margin-bottom:20px">Export PDF</a>
+    <div class="container">
+        <table class="table table-bordered" style="width:100%">
+            <tr>
+                <th colspan="5"><h2 class="text-center">Báo Cáo Doanh Thu Bán Vé Các Chuyến Bay</h2></th>
+            </tr>
+            <tr>
+                <td colspan="5" class="text-center">Tháng: {{ thang }} - Năm: {{ nam }}</td>
+            </tr>
+            <tr>
+                <td>STT</td>
+                <td>Chuyến bay</td>
+                <td>Số vé</td>
+                <td>Tỷ lệ</td>
+                <td>Doanh thu</td>
+            </tr>
+            {% if chuyenbay %}
+            {% for i in range(len) %}
+            <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ chuyenbay[i].chuyen_bay }}</td>
+                <td>{{ chuyenbay[i].so_luong_ve }}</td>
+                <td>{{ "{:.2f}".format(chuyenbay[i].doanh_thu * 100 / tong_doanh_thu) }}%</td>
+                <td>{{ "{:,.0f}".format(chuyenbay[i].doanh_thu) }} VNĐ</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+    {% elif nam and quy %}
+    <a href="javascript:genPDF()" class="btn btn-danger" id="hide" style="margin-bottom:20px">Export PDF</a>
+    <div class="container">
+        <table class="table table-bordered" style="width:100%">
+            <tr>
+                <th colspan="5"><h2 class="text-center">Báo cáo doanh thu quý</h2></th>
+            </tr>
+            <tr>
+                <td colspan="5" class="text-center">Quý: {{ quy }} - Năm: {{ nam }}</td>
+            </tr>
+            <tr>
+                <td>STT</td>
+                <td>Tháng</td>
+                <td>Số chuyến bay</td>
+                <td>Doanh thu</td>
+                <td>Tỷ lệ</td>
+            </tr>
+            {% if chuyenbay %}
+            {% for i in range(len) %}
+            <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ chuyenbay[i].thang }}</td>
+                <td>{{ chuyenbay[i].so_luong }}</td>
+                <td>{{ "{:,.0f}".format(chuyenbay[i].doanh_thu) }} VNĐ</td>
+                <td>{{ "{:.2f}".format(chuyenbay[i].doanh_thu * 100 / tong_doanh_thu) }}%</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+    {% endif %}
+    <canvas id="myChart" width="400" height="400"></canvas>
+</div>
+
+
+{% if lua_chon %}
+<script>
+        var ctx = document.getElementById('myChart');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ time }},
+                datasets: [{
+                    label: 'Báo cáo doanh thu theo {{ lua_chon.lower() }}',
+                    data: {{ data }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'BÁO CÁO DOANH THU',
+                    fontSize: 24
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+                layout: {
+                    padding: {
+                        left: 50,
+                        right: 50,
+                        top: 0,
+                        bottom: 0
+                    }
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        fontColor: 'rgb(255, 99, 132)',
+                        fontSize: 14
+                    },
+                    position: 'bottom',
+                }
+            }
+        });
+
+</script>
+{% endif %}
+
+{% endblock %}

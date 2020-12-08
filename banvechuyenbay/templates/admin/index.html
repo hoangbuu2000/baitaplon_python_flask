@@ -9,7 +9,7 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <style>
-        {% if current_user.is_authenticated %}
+        {% if current_user.is_authenticated and current_user.nhan_vien.user_role.name == 'Quản trị' %}
         nav.navbar{
             display:block;
         }
@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block body %}
-    {% if current_user.is_authenticated %}
+    {% if current_user.is_authenticated and current_user.nhan_vien.user_role.name == 'Quản trị' %}
         <h1>Đây là trang chủ admin</h1>
     {% else %}
         {% include 'admin/login.html' %}

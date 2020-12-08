@@ -28,7 +28,7 @@ class SanBay(BaseModel):
     __tablename__ = "sanbay"
 
     vi_tri = Column(String(50), nullable=False)
-    san_bay_trung_gian = relationship('SanBayTrungGian', uselist=False, backref='san_bay', lazy=True)
+    san_bay_trung_gian = relationship('SanBayTrungGian', backref='san_bay', lazy=True)
 
 
 class DuongBay(db.Model):
@@ -65,9 +65,9 @@ class ChuyenBay(db.Model):
     __tablename__ = "chuyenbay"
 
     id_chuyen_bay = Column(Integer, primary_key=True, autoincrement=True)
-    id_may_bay = Column(Integer, ForeignKey(MayBay.id), primary_key=True, nullable=False)
-    id_duong_bay = Column(Integer, ForeignKey(DuongBay.id), primary_key=True, nullable=False)
-    ngay_khoi_hanh = Column(DateTime, primary_key=True, default=datetime.now(), nullable=False)
+    id_may_bay = Column(Integer, ForeignKey(MayBay.id), nullable=False)
+    id_duong_bay = Column(Integer, ForeignKey(DuongBay.id), nullable=False)
+    ngay_khoi_hanh = Column(DateTime, default=datetime.now(), nullable=False)
     thoi_gian_bay = Column(Time, nullable=False)
     ve = relationship('Ve', backref="chuyen_bay", lazy=True)
 
@@ -153,7 +153,6 @@ class Ghe(BaseModel):
 
     def __str__(self):
         return "%s - %s" %(str(self.name), str(self.may_bay))
-
 
 class Ve(db.Model):
     __tablename__ = "ve"

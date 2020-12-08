@@ -1,79 +1,211 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <title>Document</title>
-</head>
-<body>
+{% extends 'index.html' %}
+
+{% block head_css %}
+<style>
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    /* The Close Button */
+    .close {
+      color: #aaaaaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block title %}
+<title>Chi tiết chuyến bay</title>
+{% endblock %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <a class="navbar-brand" href="
+    {% if current_user.is_authenticated and not khach_hang %}
+    {{ url_for('index1') }}
+    {% else %}
+    {{ url_for('index') }}
+    {% endif %}
+    ">FORBEE</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="
+                {% if current_user.is_authenticated and not khach_hang %}
+                {{ url_for('index1') }}
+                {% else %}
+                {{ url_for('index') }}
+                {% endif %}
+                ">Trang chủ <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('tim_chuyen_bay') }}">Chuyến bay</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Đặt vé</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Liên hệ</a>
+            </li>
+            {% if current_user.is_authenticated and not khach_hang %}
+            <!--                <li><a class="text-light btn btn-primary" href="{{ url_for('register1') }}">Đăng ký</a></li>-->
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Đăng xuất</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('confirm') }}">Ghi nhận đặt vé</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+{% endblock %}
+
+{% block right %}
+<div class="col-md-12 col-lg-9" style="padding-top:50px">
     {% if chuyenbay %}
     <h2 class="text-primary text-center">Lịch chuyến bay</h2>
-    <table class="table table-bordered">
+    <table class="table table-bordered table-responsive-md">
+        <tr class="text-primary">
+<!--            <td>Mã chuyến bay</td>-->
+<!--            <td>Sân bay đi</td>-->
+<!--            <td>Sân bay đến</td>-->
+<!--            <td>Ngày - giờ</td>-->
+<!--            <td>Thời gian bay</td>-->
+<!--            <td>Số lượng ghế hạng 1</td>-->
+<!--            <td>Số lượng ghế hạng 2</td>-->
+<!--            <td>Sân bay trung gian</td>-->
+<!--            <td>Thời gian dừng</td>-->
+            <td colspan="1">BM1</td>
+            <td colspan="3">Lịch Chuyến Bay</td>
+        </tr>
+        {% if len %}
         <tr>
-            <td>Mã chuyến bay</td>
-            <td>Sân bay đi</td>
-            <td>Sân bay đến</td>
-            <td>Ngày - giờ</td>
-            <td>Thời gian bay</td>
-            <td>Số lượng ghế hạng 1</td>
-            <td>Số lượng ghế hạng 2</td>
-            <td>Sân bay trung gian</td>
-            <td>Thời gian dừng</td>
+            <td colspan="2">Mã chuyến bay: {{ chuyenbay[0].id_chuyen_bay }}</td>
+            <td colspan="2"></td>
         </tr>
         <tr>
-            {% if len %}
-                <td>{{ chuyenbay[0].id_chuyen_bay }}</td>
-                <td>{{ chuyenbay[0].sanbaydi }}</td>
-                <td>{{ chuyenbay[0].sanbayden }}</td>
-                <td>{{ chuyenbay[0].ngay_khoi_hanh }}</td>
-                <td>{{ chuyenbay[0].thoi_gian_bay }}</td>
-                <td>{{ chuyenbay[0].ghe_hang_1 }}</td>
-                <td>{{ chuyenbay[0].ghe_hang_2 }}</td>
-
-                <td>
-                    {{ chuyenbay[0].sanbaytrunggian }}
-                    {% if len > 1 %}
-                        -
-                        {% if chuyenbay[1].sanbaytrunggian %}
-                            {{ chuyenbay[1].sanbaytrunggian }}
-                        {% endif %}
-                    {% endif %}
-                </td>
-                <td>
-                    {{ chuyenbay[0].thoi_gian_dung }}
-                    {% if len > 1 %}
-                        -
-                        {% if chuyenbay[1].sanbaytrunggian %}
-                            {{ chuyenbay[1].thoi_gian_dung }}
-                        {% endif %}
-                    {% endif %}
-                </td>
-            {% else %}
-                <td>{{ chuyenbay.id_chuyen_bay }}</td>
-                <td>{{ chuyenbay.sanbaydi }}</td>
-                <td>{{ chuyenbay.sanbayden }}</td>
-                <td>{{ chuyenbay.ngay_khoi_hanh }}</td>
-                <td>{{ chuyenbay.thoi_gian_bay }}</td>
-                <td>{{ chuyenbay.ghe_hang_1 }}</td>
-                <td>{{ chuyenbay.ghe_hang_2 }}</td>
-
-                <td>
-
-                </td>
-                <td>
-
-                </td>
-            {% endif %}
+            <td colspan="2">Sân bay đi: {{ chuyenbay[0].sanbaydi }}</td>
+            <td colspan="2">Sân bay đến: {{ chuyenbay[0].sanbayden }}</td>
         </tr>
+        <tr>
+            <td colspan="2">Ngày - giờ: {{ chuyenbay[0].ngay_khoi_hanh.strftime('%d-%m-%Y, %H:%M') }}</td>
+            <td colspan="2">Thời gian bay: {{ chuyenbay[0].thoi_gian_bay }}</td>
+        </tr>
+        <tr>
+            <td colspan="2">Số lượng ghế hạng 1: {{ chuyenbay[0].ghe_hang_1 }}</td>
+            <td colspan="2">Số lượng ghế hạng 2: {{ chuyenbay[0].ghe_hang_2 }}</td>
+        </tr>
+        <tr>
+            <th>STT</th>
+            <th>Sân bay trung gian</th>
+            <th>Thời gian dừng</th>
+            <th>Ghi chú</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>{{ chuyenbay[0].sanbaytrunggian }}</td>
+            <td>{{ chuyenbay[0].thoi_gian_dung }}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>
+                {% if len > 1 %}
+                {{ chuyenbay[1].sanbaytrunggian }}
+                {% endif %}
+            </td>
+            <td>
+                {% if len > 1 %}
+                {{ chuyenbay[1].thoi_gian_dung }}
+                {% endif %}
+            </td>
+            <td></td>
+        </tr>
+        {% endif %}
+<!--        <tr>-->
+<!--            {% if len %}-->
+<!--            <td>{{ chuyenbay[0].id_chuyen_bay }}</td>-->
+<!--            <td>{{ chuyenbay[0].sanbaydi }}</td>-->
+<!--            <td>{{ chuyenbay[0].sanbayden }}</td>-->
+<!--            <td>{{ chuyenbay[0].ngay_khoi_hanh.strftime('%d-%m-%Y %H:%M') }}</td>-->
+<!--            <td>{{ chuyenbay[0].thoi_gian_bay }}</td>-->
+<!--            <td>{{ chuyenbay[0].ghe_hang_1 }}</td>-->
+<!--            <td>{{ chuyenbay[0].ghe_hang_2 }}</td>-->
+
+<!--            <td>-->
+<!--                {{ chuyenbay[0].sanbaytrunggian }}-->
+<!--                {% if len > 1 %}-->
+<!--                    - -->
+<!--                    {% if chuyenbay[1].sanbaytrunggian %}-->
+<!--                        {{ chuyenbay[1].sanbaytrunggian }}-->
+<!--                    {% endif %}-->
+<!--                {% endif %}-->
+<!--            </td>-->
+<!--            <td>-->
+<!--                {{ chuyenbay[0].thoi_gian_dung }}-->
+<!--                {% if len > 1 %}-->
+<!--                    - -->
+<!--                    {% if chuyenbay[1].sanbaytrunggian %}-->
+<!--                        {{ chuyenbay[1].thoi_gian_dung }}-->
+<!--                    {% endif %}-->
+<!--                {% endif %}-->
+<!--            </td>-->
+<!--            {% else %}-->
+<!--            <td>{{ chuyenbay.id_chuyen_bay }}</td>-->
+<!--            <td>{{ chuyenbay.sanbaydi }}</td>-->
+<!--            <td>{{ chuyenbay.sanbayden }}</td>-->
+<!--            <td>{{ chuyenbay.ngay_khoi_hanh.strftime('%d-%m-%Y %H:%M') }}</td>-->
+<!--            <td>{{ chuyenbay.thoi_gian_bay }}</td>-->
+<!--            <td>{{ chuyenbay.ghe_hang_1 }}</td>-->
+<!--            <td>{{ chuyenbay.ghe_hang_2 }}</td>-->
+
+<!--            <td>-->
+
+<!--            </td>-->
+<!--            <td>-->
+
+<!--            </td>-->
+<!--            {% endif %}-->
+<!--        </tr>-->
     </table>
 
     <div class="row m-0">
         <table class="table-responsive text-center col-sm-6" style="margin-top: 100px;">
             <tr>
-                <td colspan="6"><img src="{{ url_for('static', filename='images/chongoi.jpg') }}" alt="" width="50%">
+                <td colspan="6">
+                    <img src="{{ url_for('static', filename='images/chongoi.jpg') }}" alt=""
+                         width="50%">
                 </td>
             </tr>
             <tr>
@@ -89,11 +221,15 @@
             <tr>
                 <td>{{ i + 1 }}</td>
                 {% for j in range(i * 4, i * 4 + 4) %}
-                {% if ghe[j].hang_ghe == 'Ghế hạng 1' %}
-                <td class="text-danger" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
-                {% else %}
-                <td class="text-primary" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
-                {% endif %}
+                    {% if ghe[j].available %}
+                        {% if ghe[j].hang_ghe == 'Ghế hạng 1' %}
+                            <td class="text-danger" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
+                        {% else %}
+                            <td class="text-primary" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
+                        {% endif %}
+                    {% else %}
+                        <td class="bg-dark text-light rounded-circle" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
+                    {% endif %}
                 {% endfor %}
                 <td>{{ i + 1 }}</td>
             </tr>
@@ -107,18 +243,112 @@
                 <td></td>
             </tr>
             <tr>
-                <td colspan="6"><img src="{{ url_for('static', filename='images/chongoi1.png') }}" alt=""></td>
+                <td colspan="6"><img src="{{ url_for('static', filename='images/chongoi1.png') }}" alt="">
+                </td>
             </tr>
         </table>
 
-        <div class="col-sm-6" style="margin-top:200px;">
-            <p><span class="btn btn-danger"></span> - Ghế hạng 1</p>
-            <p><span class="btn btn-primary"></span> - Ghế hạng 2</p>
+        <div class="col-sm-6" style="margin-top:200px">
+            <p style="margin-left:50px"><span class="btn btn-danger"></span> - Ghế hạng 1</p>
+            <p style="margin-left:50px"><span class="btn btn-primary"></span> - Ghế hạng 2</p>
+            <p style="margin-left:50px"><span class="btn btn-dark"></span> - Đã đặt</p>
         </div>
     </div>
 
 
-
     {% endif %}
-</body>
-</html>
+
+    <button class="btn btn-primary" style="float:right" id="myBtn">Tiếp tục</button>
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+          <h4>Đặt vé</h4>
+          <form action="{{ url_for('datve') }}" method="post">
+              <div class="form-group">
+                  <label for="">Chuyến bay</label>
+                  {% if len %}
+                    <input type="text" name="chuyenbay" class="form-control" value="{{ chuyenbay[0].noidi }} - {{ chuyenbay[0].noiden }}" readonly>
+                    <input type="hidden" name="hidden" value="{{ chuyenbay[0].id_chuyen_bay }}">
+                  {% else %}
+                    <input type="text" name="chuyenbay" class="form-control" value="{{ chuyenbay.noidi }} - {{ chuyenbay.noiden }}" readonly>
+                    <input type="hidden" name="hidden" value="{{ chuyenbay.id_chuyen_bay }}">
+                  {% endif %}
+              </div>
+
+              <div class="form-group">
+                  <label for="">Máy bay</label>
+                  {% if len %}
+                    <input type="text" name="maybay" class="form-control" value="{{ chuyenbay[0].name }}" readonly>
+                  {% else %}
+                    <input type="text" name="maybay" class="form-control" value="{{ chuyenbay.name }}" readonly>
+                  {% endif %}
+              </div>
+
+              <div class="form-group">
+                  <label for="">Ngày khởi hành</label>
+                  {% if len %}
+                    <input type="text" class="form-control" value="{{ chuyenbay[0].ngay_khoi_hanh.strftime('%d-%m-%Y, %H:%M') }}" readonly>
+                  {% else %}
+                    <input type="text" class="form-control" value="{{ chuyenbay.ngay_khoi_hanh.strftime('%d-%m-%Y, %H:%M') }}" readonly>
+                  {% endif %}
+              </div>
+
+              <div class="form-group">
+                  <label for="ghe">Chọn ghế:</label>
+
+                  <select name="ghe" id="ghe" class="form-control">
+                      {% if len %}
+                        {% for i in range(0, count) %}
+                            {% if ghe[i].available %}
+                                <option value="{{ ghe[i].ten_ghe }}">{{ ghe[i].ten_ghe }}</option>
+                            {% endif %}
+                        {% endfor %}
+                      {% else %}
+                      {% endif %}
+
+                  </select>
+              </div>
+
+              <div class="form-group">
+                  <input type="submit" class="btn btn-primary" value="Đặt vé">
+              </div>
+          </form>
+      </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("myBtn");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+</script>
+{% endblock %}

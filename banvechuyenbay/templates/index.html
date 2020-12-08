@@ -1,799 +1,200 @@
-
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-	<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Travel &mdash; 100% Free Fully Responsive HTML5 Template by FREEHTML5.co</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="Free HTML5 Template by FREEHTML5.CO" />
-	<meta name="keywords" content="free html5, free template, free bootstrap, html5, css3, mobile first, responsive" />
-	<meta name="author" content="FREEHTML5.CO" />
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}
+    <title>Trang chủ</title>
+    {% endblock %}
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    {% block head_css %}
+    {% endblock %}
+</head>
+<body>
+    {% if not current_user.is_authenticated and not khach_hang %}
+    <div class="container" id="login">
+        <h2 class="text-center text-warning">ĐĂNG NHẬP</h2>
+        <form action="{{ url_for('index1') }}" method="post">
+            <div class="form-group">
+                <label for="" class="text-light">Tài khoản</label>
+                <input type="text" class="form-control" name="username">
+                <i class="fa fa-user"></i>
+            </div>
+            <div class="form-group">
+                <label for="" class="text-light">Mật khẩu</label>
+                <input type="password" class="form-control" name="password">
+                <i class="fa fa-key"></i>
+            </div>
+            <div class="form-group">
+                <label for=""></label>
+                <input type="submit" class="btn btn-warning form-control" value="Đăng nhập">
+            </div>
+            <div class="form-group">
+                <a class="text-primary text-center" href="{{ url_for('register1') }}">Chưa có tài khoản?</a>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div>
+        <div class="row m-0">
+            <div class="col col-sm-6 col-md-7">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="">
+                <h4 class="text-danger">Bán vé chuyến bay</h4>
+            </div>
+            <div class="col col-sm-6 col-md-5" style="padding:40px 0">
+                <h3 class="text-center text-danger">Liên hệ: 0768107704</h3>
+            </div>
+        </div>
+        {% block nav %}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+            <a class="navbar-brand" href="
+            {% if current_user.is_authenticated and not khach_hang %}
+            {{ url_for('index1') }}
+            {% else %}
+            {{ url_for('index') }}
+            {% endif %}
+            ">FORBEE</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="
+                        {% if current_user.is_authenticated and not khach_hang %}
+                        {{ url_for('index1') }}
+                        {% else %}
+                        {{ url_for('index') }}
+                        {% endif %}
+                        ">Trang chủ <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tim_chuyen_bay') }}">Chuyến bay</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Đặt vé</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Liên hệ</a>
+                    </li>
+                    {% if current_user.is_authenticated and not khach_hang %}
+<!--                <li><a class="text-light btn btn-primary" href="{{ url_for('register1') }}">Đăng ký</a></li>-->
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Đăng xuất</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('confirm') }}">Ghi nhận đặt vé</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
 
-  <!-- 
-	//////////////////////////////////////////////////////
+<!--        <nav class="row m-0">-->
+<!--            <ul style="display:flex; list-style:none">-->
+<!--                <li><a class="text-light btn btn-primary active" href="-->
+<!--                {% if current_user.is_authenticated and not khach_hang %}-->
+<!--                {{ url_for('index1') }}-->
+<!--                {% else %}-->
+<!--                {{ url_for('index') }}-->
+<!--                {% endif %}-->
+<!--                ">Trang chủ</a></li>-->
+<!--                <li><a class="text-light btn btn-primary" href="{{ url_for('tim_chuyen_bay') }}">Chuyến bay</a></li>-->
+<!--                <li><a class="text-light btn btn-primary" href="">Đặt vé</a></li>-->
+<!--                <li><a class="text-light btn btn-primary" href="">Liên hệ</a></li>-->
+<!--                {% if current_user.is_authenticated and not khach_hang %}-->
+<!--&lt;!&ndash;                <li><a class="text-light btn btn-primary" href="{{ url_for('register1') }}">Đăng ký</a></li>&ndash;&gt;-->
+<!--                <li><a class="text-light btn btn-primary" href="{{ url_for('logout') }}">Đăng xuất</a></li>-->
+<!--                <li><a class="text-light btn btn-primary" href="{{ url_for('profile') }}">Profile</a></li>-->
+<!--                {% endif %}-->
+<!--            </ul>-->
+<!--        </nav>-->
+        {% endblock %}
 
-	FREE HTML5 TEMPLATE 
-	DESIGNED & DEVELOPED by FREEHTML5.CO
-		
-	Website: 		http://freehtml5.co/
-	Email: 			info@freehtml5.co
-	Twitter: 		http://twitter.com/fh5co
-	Facebook: 		https://www.facebook.com/fh5co
+        {% block content %}
+        <div class="row m-0">
+            <div class="col-md-12 col-lg-3" style="background: #f5f5f5;">
+                <div class="row m-0 text-center" style="padding:20px 0">
+                    <img class="col col-lg-2" style="max-width:80px; max-height:50px"
+                         src="https://icons.iconarchive.com/icons/martz90/circle-addon2/512/plane-flight-icon.png" alt="">
+                    <h2 class="col col-lg-auto text-primary">Tìm chuyến bay</h2>
+                </div>
+                <div>
+                    <form action="{{ url_for('tim_chuyen_bay') }}" method="post">
+                        <div class="form-group">
+                            <label for="from">Nơi đi</label>
+                            <input type="text" name="from" id="from" placeholder="Nơi di" class="form-control" required>
+                        </div>
 
-	//////////////////////////////////////////////////////
-	 -->
+                        <div class="form-group">
+                            <label for="to">Nơi đến</label>
+                            <input type="text" name="to" id="to" placeholder="Nơi đến" class="form-control" required>
+                        </div>
 
-  	<!-- Facebook and Twitter integration -->
-	<meta property="og:title" content=""/>
-	<meta property="og:image" content=""/>
-	<meta property="og:url" content=""/>
-	<meta property="og:site_name" content=""/>
-	<meta property="og:description" content=""/>
-	<meta name="twitter:title" content="" />
-	<meta name="twitter:image" content="" />
-	<meta name="twitter:url" content="" />
-	<meta name="twitter:card" content="" />
+                        <div class="form-group">
+                            <label for="date">Ngày khởi hành</label>
+                            <input type="date" name="date" id="date" class="form-control">
+                        </div>
 
-	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-	<link rel="shortcut icon" href="favicon.ico">
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="Tìm kiếm">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% block right %}
+            <div class="col-md-12 col-lg-9" style="padding:50px">
+                <h2>Chuyến bay được ưa thích</h2>
+                <hr>
+                <div class="row m-0">
 
-	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
-	
-	<!-- Animate.css -->
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/animate.css') }}">
-	<!-- Icomoon Icon Fonts-->
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/icomoon.css') }}">
-	<!-- Bootstrap  -->
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
-	<!-- Superfish -->
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/superfish.css') }}">
-	<!-- Magnific Popup -->
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/magnific-popup.css') }}">
-	<!-- Date Picker -->
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker.min.css') }}">
-	<!-- CS Select -->
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/cs-select.css') }}">
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/cs-skin-border.css') }}">
-	
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+                    {% if chuyen_bay %}
+                        {% for cb in chuyen_bay %}
+                        <div class="col-12 col-lg-4 col-md-12" style="margin-top: 20px">
+                            <img src="{{ url_for('static', filename='images/mt-1307-content-bg01.jpg') }}" alt="" width="100%">
+                            <h4>{{ cb.noidi }} - {{ cb.noiden }}</h4>
+                            <p>Khởi hành: {{ cb.ngay_khoi_hanh.day }} - {{ cb.ngay_khoi_hanh.month }} - {{ cb.ngay_khoi_hanh.year }}</p>
+                            <a href="{{ url_for('chi_tiet', id=cb.id_chuyen_bay) }}" class="btn btn-primary">Đặt ngay</a>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
 
+<!--                    <div class="col col-sm-4">-->
+<!--                        <img src="{{ url_for('static', filename='images/mt-1307-content-bg04.jpg') }}" alt="" width="100%">-->
+<!--                        <h4>HCM đến Hà Nội</h4>-->
+<!--                        <p>Khởi hành:</p>-->
+<!--                        <a href="" class="btn btn-primary">ĐẶT NGAY</a>-->
+<!--                    </div>-->
 
-	<!-- Modernizr JS -->
-	<script src="{{ url_for('static', filename='js/modernizr-2.6.2.min.js') }}"></script>
-	<!-- FOR IE9 below -->
-	<!--[if lt IE 9]>
-	<script src="{{ url_for('static', filename='js/respond.min.js') }}"></script>
-	<![endif]-->
+<!--                    <div class="col col-sm-4">-->
+<!--                        <img src="{{ url_for('static', filename='images/mt-1307-content-bg04.jpg') }}" alt="" width="100%">-->
+<!--                        <h4>HCM đến Hà Nội</h4>-->
+<!--                        <p>Khởi hành:</p>-->
+<!--                        <a href="" class="btn btn-primary">ĐẶT NGAY</a>-->
+<!--                    </div>-->
 
-	</head>
-
-	<body>
-	{% block body %}
-		<div id="fh5co-wrapper">
-		<div id="fh5co-page">
-
-		<header id="fh5co-header-section" class="sticky-banner">
-			<div class="container">
-				<div class="nav-header">
-					<a href="#" class="js-fh5co-nav-toggle fh5co-nav-toggle dark"><i></i></a>
-					<h1 id="fh5co-logo"><a href="{{ url_for('index') }}"><i class="icon-airplane"></i>Travel</a></h1>
-					<!-- START #fh5co-menu-wrap -->
-					{% block nav %}
-					<nav id="fh5co-menu-wrap" role="navigation">
-						<ul class="sf-menu" id="fh5co-primary-menu">
-							<li class="active"><a href="{{ url_for('index') }}">Home</a></li>
-							<li>
-								<a href="{{ url_for('vacation') }}" class="fh5co-sub-ddown">Vacations</a>
-								<ul class="fh5co-sub-menu">
-									<li><a href="#">Family</a></li>
-									<li><a href="#">CSS3 &amp; HTML5</a></li>
-									<li><a href="#">Angular JS</a></li>
-									<li><a href="#">Node JS</a></li>
-									<li><a href="#">Django &amp; Python</a></li>
-								</ul>
-							</li>
-							<li><a href="{{ url_for('flight') }}">Flights</a></li>
-							<li><a href="{{ url_for('hotel') }}">Hotel</a></li>
-							<li><a href="{{ url_for('car') }}">Car</a></li>
-							<li><a href="{{ url_for('blog') }}">Blog</a></li>
-							<li><a href="{{ url_for('contact') }}">Contact</a></li>
-						</ul>
-					</nav>
-					{% endblock %}
-				</div>
-			</div>
-		</header>
-
-		<!-- end:header-top -->
-	
-		<div class="fh5co-hero">
-			<div class="fh5co-overlay"></div>
-			<div class="fh5co-cover" data-stellar-background-ratio="0.5" style="background-image: url(images/cover_bg_1.jpg);">
-				<div class="desc">
-					<div class="container">
-						<div class="row">
-							<div class="col-sm-5 col-md-5">
-								<div class="tabulation animate-box">
-
-								  <!-- Nav tabs -->
-								   <ul class="nav nav-tabs" role="tablist">
-								      <li role="presentation" class="active">
-								      	<a href="#flights" aria-controls="flights" role="tab" data-toggle="tab">Flights</a>
-								      </li>
-								      <li role="presentation">
-								    	   <a href="#hotels" aria-controls="hotels" role="tab" data-toggle="tab">Hotels</a>
-								      </li>
-								      <li role="presentation">
-								    	   <a href="#packages" aria-controls="packages" role="tab" data-toggle="tab">Packages</a>
-								      </li>
-								   </ul>
-
-								   <!-- Tab panes -->
-									<div class="tab-content">
-									 <div role="tabpanel" class="tab-pane active" id="flights">
-										<form action="{{ url_for('tim_chuyen_bay') }}" method="post">
-											<div class="row">
-											<div class="col-xxs-12 col-xs-6 mt">
-												<div class="input-field">
-													<label for="from-place">From:</label>
-													<input type="text" name="from" class="form-control" id="from-place" placeholder="Los Angeles, USA" required/>
-												</div>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt">
-												<div class="input-field">
-													<label for="to-place">To:</label>
-													<input type="text" name="to" class="form-control" id="to-place" placeholder="Tokyo, Japan" required/>
-												</div>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt">
-												<div class="input-field">
-													<label for="date">Check In:</label>
-													<input type="date" name="date" class="form-control" id="date" placeholder="mm/dd/yyyy"/>
-												</div>
-											</div>
-											<div class="col-xs-12">
-												<input type="submit" class="btn btn-primary btn-block" value="Search Flight">
-											</div>
-										</form>
-
-<!--											<div class="col-xxs-12 col-xs-6 mt alternate">-->
-<!--												<div class="input-field">-->
-<!--													<label for="date-end">Check Out:</label>-->
-<!--													<input type="text" class="form-control" id="date-end" placeholder="mm/dd/yyyy"/>-->
-<!--												</div>-->
-<!--											</div>-->
-<!--											<div class="col-sm-12 mt">-->
-<!--												<section>-->
-<!--													<label for="class">Class:</label>-->
-<!--													<select class="cs-select cs-skin-border">-->
-<!--														<option value="" disabled selected>Economy</option>-->
-<!--														<option value="economy">Economy</option>-->
-<!--														<option value="first">First</option>-->
-<!--														<option value="business">Business</option>-->
-<!--													</select>-->
-<!--												</section>-->
-<!--											</div>-->
-<!--											<div class="col-xxs-12 col-xs-6 mt">-->
-<!--												<section>-->
-<!--													<label for="class">Adult:</label>-->
-<!--													<select class="cs-select cs-skin-border">-->
-<!--														<option value="" disabled selected>1</option>-->
-<!--														<option value="1">1</option>-->
-<!--														<option value="2">2</option>-->
-<!--														<option value="3">3</option>-->
-<!--														<option value="4">4</option>-->
-<!--													</select>-->
-<!--												</section>-->
-<!--											</div>-->
-<!--											<div class="col-xxs-12 col-xs-6 mt">-->
-<!--												<section>-->
-<!--													<label for="class">Children:</label>-->
-<!--													<select class="cs-select cs-skin-border">-->
-<!--														<option value="" disabled selected>1</option>-->
-<!--														<option value="1">1</option>-->
-<!--														<option value="2">2</option>-->
-<!--														<option value="3">3</option>-->
-<!--														<option value="4">4</option>-->
-<!--													</select>-->
-<!--												</section>-->
-<!--											</div>-->
-
-										</div>
-									 </div>
-
-									 <div role="tabpanel" class="tab-pane" id="hotels">
-									 	<div class="row">
-											<div class="col-xxs-12 col-xs-12 mt">
-												<div class="input-field">
-													<label for="from">City:</label>
-													<input type="text" class="form-control" id="from-place" placeholder="Los Angeles, USA"/>
-												</div>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt alternate">
-												<div class="input-field">
-													<label for="date-start">Return:</label>
-													<input type="text" class="form-control" id="date-start" placeholder="mm/dd/yyyy"/>
-												</div>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt alternate">
-												<div class="input-field">
-													<label for="date-end">Check Out:</label>
-													<input type="text" class="form-control" id="date-end" placeholder="mm/dd/yyyy"/>
-												</div>
-											</div>
-											<div class="col-sm-12 mt">
-												<section>
-													<label for="class">Rooms:</label>
-													<select class="cs-select cs-skin-border">
-														<option value="" disabled selected>1</option>
-														<option value="economy">1</option>
-														<option value="first">2</option>
-														<option value="business">3</option>
-													</select>
-												</section>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt">
-												<section>
-													<label for="class">Adult:</label>
-													<select class="cs-select cs-skin-border">
-														<option value="" disabled selected>1</option>
-														<option value="1">1</option>
-														<option value="2">2</option>
-														<option value="3">3</option>
-														<option value="4">4</option>
-													</select>
-												</section>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt">
-												<section>
-													<label for="class">Children:</label>
-													<select class="cs-select cs-skin-border">
-														<option value="" disabled selected>1</option>
-														<option value="1">1</option>
-														<option value="2">2</option>
-														<option value="3">3</option>
-														<option value="4">4</option>
-													</select>
-												</section>
-											</div>
-											<div class="col-xs-12">
-												<input type="submit" class="btn btn-primary btn-block" value="Search Hotel">
-											</div>
-										</div>
-									 </div>
-
-									 <div role="tabpanel" class="tab-pane" id="packages">
-									 	<div class="row">
-											<div class="col-xxs-12 col-xs-6 mt">
-												<div class="input-field">
-													<label for="from">City:</label>
-													<input type="text" class="form-control" id="from-place" placeholder="Los Angeles, USA"/>
-												</div>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt">
-												<div class="input-field">
-													<label for="from">Destination:</label>
-													<input type="text" class="form-control" id="to-place" placeholder="Tokyo, Japan"/>
-												</div>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt alternate">
-												<div class="input-field">
-													<label for="date-start">Departs:</label>
-													<input type="text" class="form-control" id="date-start" placeholder="mm/dd/yyyy"/>
-												</div>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt alternate">
-												<div class="input-field">
-													<label for="date-end">Return:</label>
-													<input type="text" class="form-control" id="date-end" placeholder="mm/dd/yyyy"/>
-												</div>
-											</div>
-											<div class="col-sm-12 mt">
-												<section>
-													<label for="class">Rooms:</label>
-													<select class="cs-select cs-skin-border">
-														<option value="" disabled selected>1</option>
-														<option value="economy">1</option>
-														<option value="first">2</option>
-														<option value="business">3</option>
-													</select>
-												</section>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt">
-												<section>
-													<label for="class">Adult:</label>
-													<select class="cs-select cs-skin-border">
-														<option value="" disabled selected>1</option>
-														<option value="1">1</option>
-														<option value="2">2</option>
-														<option value="3">3</option>
-														<option value="4">4</option>
-													</select>
-												</section>
-											</div>
-											<div class="col-xxs-12 col-xs-6 mt">
-												<section>
-													<label for="class">Children:</label>
-													<select class="cs-select cs-skin-border">
-														<option value="" disabled selected>1</option>
-														<option value="1">1</option>
-														<option value="2">2</option>
-														<option value="3">3</option>
-														<option value="4">4</option>
-													</select>
-												</section>
-											</div>
-											<div class="col-xs-12">
-												<input type="submit" class="btn btn-primary btn-block" value="Search Packages">
-											</div>
-										</div>
-									 </div>
-									</div>
-
-								</div>
-							</div>
-							<div class="desc2 animate-box">
-								<div class="col-sm-7 col-sm-push-1 col-md-7 col-md-push-1">
-									<p>HandCrafted by <a href="http://frehtml5.co/" target="_blank" class="fh5co-site-name">FreeHTML5.co</a></p>
-									<h2>Exclusive Limited Time Offer</h2>
-									<h3>Fly to Hong Kong via Los Angeles, USA</h3>
-									<span class="price">$599</span>
-									<!-- <p><a class="btn btn-primary btn-lg" href="#">Get Started</a></p> -->
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-
-		</div>
-		
-		<div id="fh5co-tours" class="fh5co-section-gray">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-8 col-md-offset-2 text-center heading-section animate-box">
-						<h3>Hot Tours</h3>
-						<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-4 col-sm-6 fh5co-tours animate-box" data-animate-effect="fadeIn">
-						<div href="#"><img src="{{ url_for('static', filename='images/place-1.jpg') }}" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-							<div class="desc">
-								<span></span>
-								<h3>New York</h3>
-								<span>3 nights + Flight 5*Hotel</span>
-								<span class="price">$1,000</span>
-								<a class="btn btn-primary btn-outline" href="#">Book Now <i class="icon-arrow-right22"></i></a>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4 col-sm-6 fh5co-tours animate-box" data-animate-effect="fadeIn">
-						<div href="#"><img src="{{ url_for('static', filename='images/place-2.jpg') }}" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-							<div class="desc">
-								<span></span>
-								<h3>Philippines</h3>
-								<span>4 nights + Flight 5*Hotel</span>
-								<span class="price">$1,000</span>
-								<a class="btn btn-primary btn-outline" href="#">Book Now <i class="icon-arrow-right22"></i></a>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4 col-sm-6 fh5co-tours animate-box" data-animate-effect="fadeIn">
-						<div href="#"><img src="{{ url_for('static', filename='images/place-3.jpg') }}" alt="Free HTML5 Website Template by FreeHTML5.co" class="img-responsive">
-							<div class="desc">
-								<span></span>
-								<h3>Hongkong</h3>
-								<span>2 nights + Flight 4*Hotel</span>
-								<span class="price">$1,000</span>
-								<a class="btn btn-primary btn-outline" href="#">Book Now <i class="icon-arrow-right22"></i></a>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-12 text-center animate-box">
-						<p><a class="btn btn-primary btn-outline btn-lg" href="#">See All Offers <i class="icon-arrow-right22"></i></a></p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="fh5co-features">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-4 animate-box">
-
-						<div class="feature-left">
-							<span class="icon">
-								<i class="icon-hotairballoon"></i>
-							</span>
-							<div class="feature-copy">
-								<h3>Family Travel</h3>
-								<p>Facilis ipsum reprehenderit nemo molestias. Aut cum mollitia reprehenderit.</p>
-								<p><a href="#">Learn More</a></p>
-							</div>
-						</div>
-
-					</div>
-
-					<div class="col-md-4 animate-box">
-						<div class="feature-left">
-							<span class="icon">
-								<i class="icon-search"></i>
-							</span>
-							<div class="feature-copy">
-								<h3>Travel Plans</h3>
-								<p>Facilis ipsum reprehenderit nemo molestias. Aut cum mollitia reprehenderit.</p>
-								<p><a href="#">Learn More</a></p>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4 animate-box">
-						<div class="feature-left">
-							<span class="icon">
-								<i class="icon-wallet"></i>
-							</span>
-							<div class="feature-copy">
-								<h3>Honeymoon</h3>
-								<p>Facilis ipsum reprehenderit nemo molestias. Aut cum mollitia reprehenderit.</p>
-								<p><a href="#">Learn More</a></p>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-4 animate-box">
-
-						<div class="feature-left">
-							<span class="icon">
-								<i class="icon-wine"></i>
-							</span>
-							<div class="feature-copy">
-								<h3>Business Travel</h3>
-								<p>Facilis ipsum reprehenderit nemo molestias. Aut cum mollitia reprehenderit.</p>
-								<p><a href="#">Learn More</a></p>
-							</div>
-						</div>
-
-					</div>
-
-					<div class="col-md-4 animate-box">
-						<div class="feature-left">
-							<span class="icon">
-								<i class="icon-genius"></i>
-							</span>
-							<div class="feature-copy">
-								<h3>Solo Travel</h3>
-								<p>Facilis ipsum reprehenderit nemo molestias. Aut cum mollitia reprehenderit.</p>
-								<p><a href="#">Learn More</a></p>
-							</div>
-						</div>
-
-					</div>
-					<div class="col-md-4 animate-box">
-						<div class="feature-left">
-							<span class="icon">
-								<i class="icon-chat"></i>
-							</span>
-							<div class="feature-copy">
-								<h3>Explorer</h3>
-								<p>Facilis ipsum reprehenderit nemo molestias. Aut cum mollitia reprehenderit.</p>
-								<p><a href="#">Learn More</a></p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		
-		<div id="fh5co-destination">
-			<div class="tour-fluid">
-				<div class="row">
-					<div class="col-md-12">
-						<ul id="fh5co-destination-list" class="animate-box">
-							<li class="one-forth text-center" style="background-image: url(images/place-1.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Los Angeles</h2>
-									</div>
-								</a>
-							</li>
-							<li class="one-forth text-center" style="background-image: url(images/place-2.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Hongkong</h2>
-									</div>
-								</a>
-							</li>
-							<li class="one-forth text-center" style="background-image: url(images/place-3.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Italy</h2>
-									</div>
-								</a>
-							</li>
-							<li class="one-forth text-center" style="background-image: url(images/place-4.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Philippines</h2>
-									</div>
-								</a>
-							</li>
-
-							<li class="one-forth text-center" style="background-image: url(images/place-5.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Japan</h2>
-									</div>
-								</a>
-							</li>
-							<li class="one-half text-center">
-								<div class="title-bg">
-									<div class="case-studies-summary">
-										<h2>Most Popular Destinations</h2>
-										<span><a href="#">View All Destinations</a></span>
-									</div>
-								</div>
-							</li>
-							<li class="one-forth text-center" style="background-image: url(images/place-6.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Paris</h2>
-									</div>
-								</a>
-							</li>
-							<li class="one-forth text-center" style="background-image: url(images/place-7.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Singapore</h2>
-									</div>
-								</a>
-							</li>
-							<li class="one-forth text-center" style="background-image: url(images/place-8.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Madagascar</h2>
-									</div>
-								</a>
-							</li>
-							<li class="one-forth text-center" style="background-image: url(images/place-9.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Egypt</h2>
-									</div>
-								</a>
-							</li>
-							<li class="one-forth text-center" style="background-image: url(images/place-10.jpg); ">
-								<a href="#">
-									<div class="case-studies-summary">
-										<h2>Indonesia</h2>
-									</div>
-								</a>
-							</li>
-						</ul>		
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="fh5co-blog-section" class="fh5co-section-gray">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-8 col-md-offset-2 text-center heading-section animate-box">
-						<h3>Recent From Blog</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Velit est facilis maiores, perspiciatis accusamus asperiores sint consequuntur debitis.</p>
-					</div>
-				</div>
-			</div>
-			<div class="container">
-				<div class="row row-bottom-padded-md">
-					<div class="col-lg-4 col-md-4 col-sm-6">
-						<div class="fh5co-blog animate-box">
-							<a href="#"><img class="img-responsive" src="{{ url_for('static', filename='images/place-1.jpg') }}" alt=""></a>
-							<div class="blog-text">
-								<div class="prod-title">
-									<h3><a href="#">30% Discount to Travel All Around the World</a></h3>
-									<span class="posted_by">Sep. 15th</span>
-									<span class="comment"><a href="">21<i class="icon-bubble2"></i></a></span>
-									<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-									<p><a href="#">Learn More...</a></p>
-								</div>
-							</div> 
-						</div>
-					</div>
-					<div class="col-lg-4 col-md-4 col-sm-6">
-						<div class="fh5co-blog animate-box">
-							<a href="#"><img class="img-responsive" src="{{ url_for('static', filename='images/place-2.jpg') }}" alt=""></a>
-							<div class="blog-text">
-								<div class="prod-title">
-									<h3><a href="#">Planning for Vacation</a></h3>
-									<span class="posted_by">Sep. 15th</span>
-									<span class="comment"><a href="">21<i class="icon-bubble2"></i></a></span>
-									<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-									<p><a href="#">Learn More...</a></p>
-								</div>
-							</div> 
-						</div>
-					</div>
-					<div class="clearfix visible-sm-block"></div>
-					<div class="col-lg-4 col-md-4 col-sm-6">
-						<div class="fh5co-blog animate-box">
-							<a href="#"><img class="img-responsive" src="{{ url_for('static', filename='images/place-3.jpg') }}" alt=""></a>
-							<div class="blog-text">
-								<div class="prod-title">
-									<h3><a href="#">Visit Tokyo Japan</a></h3>
-									<span class="posted_by">Sep. 15th</span>
-									<span class="comment"><a href="">21<i class="icon-bubble2"></i></a></span>
-									<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-									<p><a href="#">Learn More...</a></p>
-								</div>
-							</div> 
-						</div>
-					</div>
-					<div class="clearfix visible-md-block"></div>
-				</div>
-
-				<div class="col-md-12 text-center animate-box">
-					<p><a class="btn btn-primary btn-outline btn-lg" href="#">See All Post <i class="icon-arrow-right22"></i></a></p>
-				</div>
-
-			</div>
-		</div>
-		<!-- fh5co-blog-section -->
-		<div id="fh5co-testimonial" style="background-image:url(images/img_bg_1.jpg);">
-		<div class="container">
-			<div class="row animate-box">
-				<div class="col-md-8 col-md-offset-2 text-center fh5co-heading">
-					<h2>Happy Clients</h2>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-4">
-					<div class="box-testimony animate-box">
-						<blockquote>
-							<span class="quote"><span><i class="icon-quotes-right"></i></span></span>
-							<p>&ldquo;Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.&rdquo;</p>
-						</blockquote>
-						<p class="author">John Doe, CEO <a href="http://freehtml5.co/" target="_blank">FREEHTML5.co</a> <span class="subtext">Creative Director</span></p>
-					</div>
-					
-				</div>
-				<div class="col-md-4">
-					<div class="box-testimony animate-box">
-						<blockquote>
-							<span class="quote"><span><i class="icon-quotes-right"></i></span></span>
-							<p>&ldquo;Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.&rdquo;</p>
-						</blockquote>
-						<p class="author">John Doe, CEO <a href="http://freehtml5.co/" target="_blank">FREEHTML5.co</a> <span class="subtext">Creative Director</span></p>
-					</div>
-					
-					
-				</div>
-				<div class="col-md-4">
-					<div class="box-testimony animate-box">
-						<blockquote>
-							<span class="quote"><span><i class="icon-quotes-right"></i></span></span>
-							<p>&ldquo;Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.&rdquo;</p>
-						</blockquote>
-						<p class="author">John Doe, Founder <a href="#">FREEHTML5.co</a> <span class="subtext">Creative Director</span></p>
-					</div>
-					
-				</div>
-			</div>
-		</div>
-	</div>
-		<footer>
-			<div id="footer">
-				<div class="container">
-					<div class="row row-bottom-padded-md">
-						<div class="col-md-2 col-sm-2 col-xs-12 fh5co-footer-link">
-							<h3>About Travel</h3>
-							<p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-						</div>
-						<div class="col-md-2 col-sm-2 col-xs-12 fh5co-footer-link">
-							<h3>Top Flights Routes</h3>
-							<ul>
-								<li><a href="#">Manila flights</a></li>
-								<li><a href="#">Dubai flights</a></li>
-								<li><a href="#">Bangkok flights</a></li>
-								<li><a href="#">Tokyo Flight</a></li>
-								<li><a href="#">New York Flights</a></li>
-							</ul>
-						</div>
-						<div class="col-md-2 col-sm-2 col-xs-12 fh5co-footer-link">
-							<h3>Top Hotels</h3>
-							<ul>
-								<li><a href="#">Boracay Hotel</a></li>
-								<li><a href="#">Dubai Hotel</a></li>
-								<li><a href="#">Singapore Hotel</a></li>
-								<li><a href="#">Manila Hotel</a></li>
-							</ul>
-						</div>
-						<div class="col-md-2 col-sm-2 col-xs-12 fh5co-footer-link">
-							<h3>Interest</h3>
-							<ul>
-								<li><a href="#">Beaches</a></li>
-								<li><a href="#">Family Travel</a></li>
-								<li><a href="#">Budget Travel</a></li>
-								<li><a href="#">Food &amp; Drink</a></li>
-								<li><a href="#">Honeymoon and Romance</a></li>
-							</ul>
-						</div>
-						<div class="col-md-2 col-sm-2 col-xs-12 fh5co-footer-link">
-							<h3>Best Places</h3>
-							<ul>
-								<li><a href="#">Boracay Beach</a></li>
-								<li><a href="#">Dubai</a></li>
-								<li><a href="#">Singapore</a></li>
-								<li><a href="#">Hongkong</a></li>
-							</ul>
-						</div>
-						<div class="col-md-2 col-sm-2 col-xs-12 fh5co-footer-link">
-							<h3>Affordable</h3>
-							<ul>
-								<li><a href="#">Food &amp; Drink</a></li>
-								<li><a href="#">Fare Flights</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6 col-md-offset-3 text-center">
-							<p class="fh5co-social-icons">
-								<a href="#"><i class="icon-twitter2"></i></a>
-								<a href="#"><i class="icon-facebook2"></i></a>
-								<a href="#"><i class="icon-instagram"></i></a>
-								<a href="#"><i class="icon-dribbble2"></i></a>
-								<a href="#"><i class="icon-youtube"></i></a>
-							</p>
-							<p>Copyright 2016 Free Html5 <a href="#">Module</a>. All Rights Reserved. <br>Made with <i class="icon-heart3"></i> by <a href="http://freehtml5.co/" target="_blank">Freehtml5.co</a> / Demo Images: <a href="https://unsplash.com/" target="_blank">Unsplash</a></p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</footer>
-
-	
-
-	</div>
-	<!-- END fh5co-page -->
-
-	</div>
-	<!-- END fh5co-wrapper -->
-	{% endblock %}
-	<!-- jQuery -->
+<!--                    <div class="col col-sm-4">-->
+<!--                        <img src="{{ url_for('static', filename='images/mt-1307-content-bg04.jpg') }}" alt="" width="100%">-->
+<!--                        <h4>HCM đến Hà Nội</h4>-->
+<!--                        <p>Khởi hành:</p>-->
+<!--                        <a href="" class="btn btn-primary">ĐẶT NGAY</a>-->
+<!--                    </div>-->
+                </div>
+            </div>
+            {% endblock %}
+        </div>
+        {% endblock %}
 
 
-	<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-	<!-- jQuery Easing -->
-	<script src="{{ url_for('static', filename='js/jquery.easing.1.3.js') }}"></script>
-	<!-- Bootstrap -->
-	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-	<!-- Waypoints -->
-	<script src="{{ url_for('static', filename='js/jquery.waypoints.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='js/sticky.js') }}"></script>
+    </div>
+    {% endif %}
 
-	<!-- Stellar -->
-	<script src="{{ url_for('static', filename='js/jquery.stellar.min.js') }}"></script>
-	<!-- Superfish -->
-	<script src="{{ url_for('static', filename='js/hoverIntent.js') }}"></script>
-	<script src="{{ url_for('static', filename='js/superfish.js') }}"></script>
-	<!-- Magnific Popup -->
-	<script src="{{ url_for('static', filename='js/jquery.magnific-popup.min.js') }}"></script>
-	<script src="{{ url_for('static', filename='js/magnific-popup-options.js') }}"></script>
-	<!-- Date Picker -->
-	<script src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
-	<!-- CS Select -->
-	<script src="{{ url_for('static', filename='js/classie.js') }}"></script>
-	<script src="{{ url_for('static', filename='js/selectFx.js') }}"></script>
-	
-	<!-- Main JS -->
-	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block js %}
+    {% endblock %}
 
-	</body>
-
+</body>
 </html>
-

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cổng truy cập</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body id="gate">
+    <div class="container">
+        <a href="{{ url_for('index') }}" class="btn btn-warning text-light" style="display:block; margin:40px; padding:20px">Truy cập với tư cách khách hàng</a>
+        <a href="{{ url_for('index1') }}" class="btn btn-danger" style="display:block; margin:40px; padding:20px">Truy cập với tư cách nhân viên</a>
+    </div>
+</body>
+</html>
