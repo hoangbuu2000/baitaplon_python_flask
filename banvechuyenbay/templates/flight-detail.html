@@ -40,6 +40,26 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    input.chk-btn {
+      display: none;
+    }
+    input.chk-btn + label {
+      border: 1px solid grey;
+      background: ghoswhite;
+      padding: 5px 8px;
+      cursor: pointer;
+      border-radius: 5px;
+      height:60px;
+    }
+    input.chk-btn:not(:checked) + label:hover {
+      box-shadow: 0px 1px 3px;
+    }
+    input.chk-btn + label:active,
+    input.chk-btn:checked + label {
+      box-shadow: 0px 0px 3px inset;
+      background: #eee;
+    }
 </style>
 {% endblock %}
 
@@ -202,6 +222,7 @@
 
     <div class="row m-0">
         <table class="table-responsive text-center col-sm-6" style="margin-top: 100px;">
+            <form action="{{ url_for('datve') }}" id="myForm" method="post">
             <tr>
                 <td colspan="6">
                     <img src="{{ url_for('static', filename='images/chongoi.jpg') }}" alt=""
@@ -223,12 +244,21 @@
                 {% for j in range(i * 4, i * 4 + 4) %}
                     {% if ghe[j].available %}
                         {% if ghe[j].hang_ghe == 'Ghế hạng 1' %}
-                            <td class="text-danger" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
+                            <td class="text-danger" style="padding:10px 20px">
+                                <input type="checkbox" id='c{{ ghe[j].id }}' name="ghe" class='chk-btn' value="{{ ghe[j].ten_ghe }}"/>
+                                <label for='c{{ ghe[j].id }}'>{{ ghe[j].ten_ghe }}</label>
+                            </td>
                         {% else %}
-                            <td class="text-primary" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
+                            <td class="text-primary" style="padding:10px 20px">
+                                <input type="checkbox" id='c{{ ghe[j].id }}' name="ghe" class='chk-btn' value="{{ ghe[j].ten_ghe }}"/>
+                                <label for='c{{ ghe[j].id }}'>{{ ghe[j].ten_ghe }}</label>
+                            </td>
                         {% endif %}
                     {% else %}
-                        <td class="bg-dark text-light rounded-circle" style="padding:10px 20px">{{ ghe[j].ten_ghe }}</td>
+                        <td class="text-dark" style="padding:10px 20px">
+                            <input type="checkbox" id='c{{ ghe[j].id }}' name="ghe" class='chk-btn' value="{{ ghe[j].ten_ghe }}" disabled/>
+                            <label for='c{{ ghe[j].id }}'>{{ ghe[j].ten_ghe }}</label>
+                        </td>
                     {% endif %}
                 {% endfor %}
                 <td>{{ i + 1 }}</td>
@@ -246,6 +276,19 @@
                 <td colspan="6"><img src="{{ url_for('static', filename='images/chongoi1.png') }}" alt="">
                 </td>
             </tr>
+
+            {% if len %}
+                <input type="hidden" name="hidden" value="{{ chuyenbay[0].id_chuyen_bay }}">
+                <input type="hidden" name="chuyenbay" class="form-control" value="{{ chuyenbay[0].noidi }} - {{ chuyenbay[0].noiden }}">
+                <input type="hidden" name="maybay" class="form-control" value="{{ chuyenbay[0].name }}">
+                <input type="hidden" class="form-control" value="{{ chuyenbay[0].ngay_khoi_hanh.strftime('%d-%m-%Y, %H:%M') }}">
+            {% else %}
+                <input type="hidden" name="hidden" value="{{ chuyenbay.id_chuyen_bay }}">
+                <input type="hidden" name="chuyenbay" class="form-control" value="{{ chuyenbay.noidi }} - {{ chuyenbay.noiden }}">
+                <input type="hidden" name="maybay" class="form-control" value="{{ chuyenbay.name }}">
+                <input type="hidden" class="form-control" value="{{ chuyenbay.ngay_khoi_hanh.strftime('%d-%m-%Y, %H:%M') }}">
+            {% endif %}
+        </form>
         </table>
 
         <div class="col-sm-6" style="margin-top:200px">
@@ -253,70 +296,72 @@
             <p style="margin-left:50px"><span class="btn btn-primary"></span> - Ghế hạng 2</p>
             <p style="margin-left:50px"><span class="btn btn-dark"></span> - Đã đặt</p>
         </div>
+
+        <input type="submit" form="myForm" class="btn btn-primary" value="Tiếp tục">
     </div>
 
 
     {% endif %}
 
-    <button class="btn btn-primary" style="float:right" id="myBtn">Tiếp tục</button>
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
+<!--    <button class="btn btn-primary" style="float:right" id="myBtn">Tiếp tục</button>-->
+<!--    &lt;!&ndash; The Modal &ndash;&gt;-->
+<!--    <div id="myModal" class="modal">-->
 
-      <!-- Modal content -->
-      <div class="modal-content">
-        <span class="close">&times;</span>
-          <h4>Đặt vé</h4>
-          <form action="{{ url_for('datve') }}" method="post">
-              <div class="form-group">
-                  <label for="">Chuyến bay</label>
-                  {% if len %}
-                    <input type="text" name="chuyenbay" class="form-control" value="{{ chuyenbay[0].noidi }} - {{ chuyenbay[0].noiden }}" readonly>
-                    <input type="hidden" name="hidden" value="{{ chuyenbay[0].id_chuyen_bay }}">
-                  {% else %}
-                    <input type="text" name="chuyenbay" class="form-control" value="{{ chuyenbay.noidi }} - {{ chuyenbay.noiden }}" readonly>
-                    <input type="hidden" name="hidden" value="{{ chuyenbay.id_chuyen_bay }}">
-                  {% endif %}
-              </div>
+<!--      &lt;!&ndash; Modal content &ndash;&gt;-->
+<!--      <div class="modal-content">-->
+<!--        <span class="close">&times;</span>-->
+<!--          <h4>Đặt vé</h4>-->
+<!--          <form action="{{ url_for('datve') }}" method="post">-->
+<!--              <div class="form-group">-->
+<!--                  <label for="">Chuyến bay</label>-->
+<!--                  {% if len %}-->
+<!--                    <input type="text" name="chuyenbay" class="form-control" value="{{ chuyenbay[0].noidi }} - {{ chuyenbay[0].noiden }}" readonly>-->
+<!--                    <input type="hidden" name="hidden" value="{{ chuyenbay[0].id_chuyen_bay }}">-->
+<!--                  {% else %}-->
+<!--                    <input type="text" name="chuyenbay" class="form-control" value="{{ chuyenbay.noidi }} - {{ chuyenbay.noiden }}" readonly>-->
+<!--                    <input type="hidden" name="hidden" value="{{ chuyenbay.id_chuyen_bay }}">-->
+<!--                  {% endif %}-->
+<!--              </div>-->
 
-              <div class="form-group">
-                  <label for="">Máy bay</label>
-                  {% if len %}
-                    <input type="text" name="maybay" class="form-control" value="{{ chuyenbay[0].name }}" readonly>
-                  {% else %}
-                    <input type="text" name="maybay" class="form-control" value="{{ chuyenbay.name }}" readonly>
-                  {% endif %}
-              </div>
+<!--              <div class="form-group">-->
+<!--                  <label for="">Máy bay</label>-->
+<!--                  {% if len %}-->
+<!--                    <input type="text" name="maybay" class="form-control" value="{{ chuyenbay[0].name }}" readonly>-->
+<!--                  {% else %}-->
+<!--                    <input type="text" name="maybay" class="form-control" value="{{ chuyenbay.name }}" readonly>-->
+<!--                  {% endif %}-->
+<!--              </div>-->
 
-              <div class="form-group">
-                  <label for="">Ngày khởi hành</label>
-                  {% if len %}
-                    <input type="text" class="form-control" value="{{ chuyenbay[0].ngay_khoi_hanh.strftime('%d-%m-%Y, %H:%M') }}" readonly>
-                  {% else %}
-                    <input type="text" class="form-control" value="{{ chuyenbay.ngay_khoi_hanh.strftime('%d-%m-%Y, %H:%M') }}" readonly>
-                  {% endif %}
-              </div>
+<!--              <div class="form-group">-->
+<!--                  <label for="">Ngày khởi hành</label>-->
+<!--                  {% if len %}-->
+<!--                    <input type="text" class="form-control" value="{{ chuyenbay[0].ngay_khoi_hanh.strftime('%d-%m-%Y, %H:%M') }}" readonly>-->
+<!--                  {% else %}-->
+<!--                    <input type="text" class="form-control" value="{{ chuyenbay.ngay_khoi_hanh.strftime('%d-%m-%Y, %H:%M') }}" readonly>-->
+<!--                  {% endif %}-->
+<!--              </div>-->
 
-              <div class="form-group">
-                  <label for="ghe">Chọn ghế:</label>
+<!--              <div class="form-group">-->
+<!--                  <label for="ghe">Chọn ghế:</label>-->
 
-                  <select name="ghe" id="ghe" class="form-control">
-                      {% if len %}
-                        {% for i in range(0, count) %}
-                            {% if ghe[i].available %}
-                                <option value="{{ ghe[i].ten_ghe }}">{{ ghe[i].ten_ghe }}</option>
-                            {% endif %}
-                        {% endfor %}
-                      {% else %}
-                      {% endif %}
+<!--                  <select name="ghe" id="ghe" class="form-control">-->
+<!--                      {% if len %}-->
+<!--                        {% for i in range(0, count) %}-->
+<!--                            {% if ghe[i].available %}-->
+<!--                                <option value="{{ ghe[i].ten_ghe }}">{{ ghe[i].ten_ghe }}</option>-->
+<!--                            {% endif %}-->
+<!--                        {% endfor %}-->
+<!--                      {% else %}-->
+<!--                      {% endif %}-->
 
-                  </select>
-              </div>
+<!--                  </select>-->
+<!--              </div>-->
 
-              <div class="form-group">
-                  <input type="submit" class="btn btn-primary" value="Đặt vé">
-              </div>
-          </form>
-      </div>
+<!--              <div class="form-group">-->
+<!--                  <input type="submit" class="btn btn-primary" value="Đặt vé">-->
+<!--              </div>-->
+<!--          </form>-->
+<!--      </div>-->
 
     </div>
 

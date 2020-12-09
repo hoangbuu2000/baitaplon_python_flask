@@ -100,9 +100,13 @@
         <p>Đến: {{ chuyen_bay.duong_bay.san_bay_den.vi_tri }}</p>
         <p>Sân bay đi: {{ chuyen_bay.duong_bay.san_bay_di.name }}</p>
         <p>Sân bay đến: {{ chuyen_bay.duong_bay.san_bay_den.name }}</p>
-        <p>Tên ghế: {{ ghe.name }}</p>
-        <p>Loại ghế: {{ ghe.loai_ghe.name }}</p>
-        <p>Thành tiền: {{ "{:,.0f}".format(ghe.loai_ghe.don_gia * chuyen_bay.duong_bay.khoang_cach) }} VND</p>
+        {% for g in ghe %}
+        <hr>
+        <p>Tên ghế: {{ g.name }}</p>
+        <p>Loại ghế: {{ g.loai_ghe }}</p>
+        <p>Giá: {{ "{:,.0f}".format(g.don_gia * chuyen_bay.duong_bay.khoang_cach) }} VND</p>
+        {% endfor %}
+
         {% endif %}
     </div>
 </div>

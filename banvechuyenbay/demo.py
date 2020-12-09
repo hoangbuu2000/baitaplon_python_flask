@@ -5,22 +5,58 @@ from banvechuyenbay.models import *
 from flask_login import login_user, logout_user, current_user
 import hashlib
 from flask_admin import BaseView
+from datetime import datetime
 
 
 @app.route('/confirm', methods=['GET', 'POST'])
 def confirm():
     if request.method == 'POST':
-        success = request.form.get('success')
-        fail = request.form.get('fail')
-        id = request.form.get('order')
+        # duyệt các key trong dict order xem nút submit là đại diện cho key nào
+        for x in session['order']:
+            if request.form.get('submit') == 'success' + x:
+                fullname = session['order'][x]['fullname']
+                gioi_tinh = session['order'][x]['gioitinh']
+                ngay_sinh = session['order'][x]['ngaysinh']
+                cmnd = session['order'][x]['cmnd']
+                dia_chi = session['order'][x]['diachi']
+                dien_thoai = session['order'][x]['dienthoai']
+                email = session['order'][x]['email']
+                ghe = session['order'][x]['ghe']
+                chuyenbay = session['order'][x]['chuyenbay']
+                duongbay = session['order'][x]['duongbay']
+                maybay = session['order'][x]['maybay']
 
-        # không xóa đc session huhu
-        if success:
-            key = frozenset(session['order'][id])
-            session.pop(key, None)
-            return redirect('/confirm')
-        if fail:
-            return fail
+                # khách hàng
+                khach_hang = KhachHang(name=fullname, gioi_tinh=gioi_tinh, ngay_sinh=ngay_sinh,
+                                       Cmnd=cmnd, dia_chi=dia_chi, sdt=dien_thoai, email=email)
+                db.session.add(khach_hang)
+                db.session.commit()
+
+                # hóa đơn
+                date = str(datetime.now().date())
+                ma_hoa_don = date + '-' + khach_hang.Cmnd[8:12]
+                hoa_don = HoaDon(id=ma_hoa_don, id_nhan_vien=current_user.id, id_khach_hang=khach_hang.id)
+
+                db.session.add(hoa_don)
+                db.session.commit()
+
+                # vé
+                ghe = Ghe.query.join(MayBay, MayBay.id == Ghe.id_may_bay).filter(Ghe.name.in_(ghe), MayBay.name == maybay)\
+                               .add_columns(Ghe.id, Ghe.name).all()
+
+                for g in ghe:
+                    ma_ve = duongbay + '[' + g.name + ']'
+                    ve = Ve(id=ma_ve, id_chuyen_bay=int(chuyenbay), id_ghe=g.id, id_hoa_don=hoa_don.id)
+                    db.session.add(ve)
+                    db.session.commit()
+
+
+                del session['order'][x]
+                return render_template('ghinhandatve.html')
+
+            if request.form.get('submit') == 'fail' + x:
+                del session['order'][x]
+                return render_template('ghinhandatve.html')
 
     return render_template('ghinhandatve.html')
 
@@ -98,7 +134,7 @@ def datve():
 
     if request.method == 'POST':
         # Chon ghe
-        data_ghe = request.form.get('ghe')
+        data_ghe = request.form.getlist('ghe')
         data_chuyenbay = request.form.get('hidden') #id chuyen bay
         data_duongbay = request.form.get('chuyenbay')
         data_maybay = request.form.get('maybay')
@@ -158,8 +194,9 @@ def datve():
 
             # Lấy ghế sau khi khách hàng đã điền thông tin đẻ set ghế đã đặt
             ghedb = Ghe.query.join(MayBay, MayBay.id == Ghe.id_may_bay)\
-                             .filter(MayBay.name == session['maybay'], Ghe.name == session['ghe']).first()
-            ghedb.available = False
+                             .filter(MayBay.name == session['maybay'], Ghe.name.in_(session['ghe'])).all()
+            for g in ghedb:
+                g.available = False
             db.session.commit()
 
 
@@ -172,7 +209,9 @@ def datve():
         # vẫn còn lỗi đặt ghế chuyến bay này sẽ ảnh hưởng ghế chuyến bay khác
         # Lấy ghế để hiển thị thông tin ghế cho khách hàng xem ở bước điền thông tin khách hàng
         ghe = Ghe.query.join(MayBay, MayBay.id == Ghe.id_may_bay)\
-                       .filter(MayBay.name == data_maybay, Ghe.name == data_ghe).first()
+                       .join(LoaiGhe, LoaiGhe.id == Ghe.id_loai_ghe)\
+                       .filter(MayBay.name == data_maybay, Ghe.name.in_(data_ghe))\
+                       .add_columns(Ghe.name, LoaiGhe.name.label('loai_ghe'), LoaiGhe.don_gia).all()
 
         chuyen_bay = ChuyenBay.query.filter(ChuyenBay.id_chuyen_bay == data_chuyenbay).first()
 

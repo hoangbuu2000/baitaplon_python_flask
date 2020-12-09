@@ -54,46 +54,45 @@
 
   <table class="table table-responsive-md">
     <tr>
-      <td>Khách hàng</td>
-      <td>Giới tính</td>
-      <td>Ngày sinh</td>
-      <td>CMND</td>
-      <td>Địa chỉ</td>
-      <td>Điện thoại</td>
-      <td>Email</td>
-      <td>Ghế</td>
-      <td>Chuyến bay</td>
-      <td>Đường bay</td>
-      <td>Máy bay</td>
+      <th>Khách hàng</th>
+      <th>Giới tính</th>
+      <th>Ngày sinh</th>
+      <th>CMND</th>
+      <th>Địa chỉ</th>
+      <th>Điện thoại</th>
+      <th>Email</th>
+      <th>Ghế</th>
+      <th>Chuyến bay</th>
+      <th>Đường bay</th>
+      <th>Máy bay</th>
     </tr>
 
+    {% if 'order' in session and session['order'] | length > 0 %}
       <form action="{{ url_for('confirm') }}" method="post" id="myForm">
-          {% for i in range(session['order'] | length) %}
-          <input type="hidden" name="order" value="{{ i + 1 }}">
+          {% for x in session['order'] %}
           <tr>
-            <td>{{ session['order'][(i + 1) | string()]['fullname'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['gioitinh'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['ngaysinh'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['cmnd'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['diachi'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['dienthoai'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['email'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['ghe'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['chuyenbay'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['duongbay'] }}</td>
-            <td>{{ session['order'][(i + 1) | string()]['maybay'] }}</td>
+            <td>{{ session['order'][x | string()]['fullname'] }}</td>
+            <td>{{ session['order'][x | string()]['gioitinh'] }}</td>
+            <td>{{ session['order'][x | string()]['ngaysinh'] }}</td>
+            <td>{{ session['order'][x | string()]['cmnd'] }}</td>
+            <td>{{ session['order'][x | string()]['diachi'] }}</td>
+            <td>{{ session['order'][x | string()]['dienthoai'] }}</td>
+            <td>{{ session['order'][x | string()]['email'] }}</td>
+            <td>{{ session['order'][x | string()]['ghe'] }}</td>
+            <td>{{ session['order'][x | string()]['chuyenbay'] }}</td>
+            <td>{{ session['order'][x | string()]['duongbay'] }}</td>
+            <td>{{ session['order'][x | string()]['maybay'] }}</td>
                 <td>
-                  <input type="hidden" name="success" id="success" value="" >
-                  <a class="button" href="javascript:" data-value="success"><i class="fa fa-check-circle text-success"></i></a>
+                  <input class="btn btn-success" type="submit" name="submit" value="success{{ x }}">
                 </td>
                 <td>
-                  <input type="hidden" name="fail" id="fail" value="" >
-                  <a class="button" href="javascript:" data-value="fail"><i class="fa fa-times text-danger"></i></a>
+                  <input class="btn btn-danger" type="submit" name="submit" value="fail{{ x }}">
                 </td>
 
           </tr>
           {% endfor %}
       </form>
+    {% endif %}
 
 
   </table>
@@ -102,16 +101,6 @@
 
 {% block js %}
 <script>
-  $(document).ready(function() {
-      $(".button").click(function(){
-        if ($(this).attr('data-value') == 'success'){
-          $("#success").val($(this).attr('data-value'));
-        }
-        else if ($(this).attr('data-value') == 'fail'){
-          $("#fail").val($(this).attr('data-value'));
-        }
-        $("#myForm").submit();
-      });
-  });
+
 </script>
 {% endblock %}

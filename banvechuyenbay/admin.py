@@ -14,7 +14,7 @@ from banvechuyenbay.models import *
 
 class AccessibleView(BaseView):
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.nhan_vien.user_role.name == 'Quản trị'
 
 
 # Template mẫu để ghi đè các trang list, create của flask-admin
@@ -140,25 +140,17 @@ class LoaiGheModelView(ModelTemplate):
 
 
 class VeModelView(ModelTemplate):
-    form_columns = ('id', 'chuyen_bay', 'nhan_vien', 'khach_hang', 'ghe', 'ngay_xuat_ve',)
-    column_list = ('id', 'chuyen_bay', 'nhan_vien', 'khach_hang', 'ghe', 'ngay_xuat_ve',)
+    form_columns = ('id', 'chuyen_bay', 'ghe', 'ngay_xuat_ve', 'hoa_don',)
+    column_list = ('id', 'chuyen_bay', 'ghe', 'ngay_xuat_ve', 'hoa_don',)
     column_labels = dict(id='Mã vé', ngay_xuat_ve='Ngày xuất vé',
-                         chuyen_bay='Tên chuyến bay', nhan_vien='Nhân viên',
-                         khach_hang='Khách hàng', ghe='Ghế')
+                         chuyen_bay='Tên chuyến bay', ghe='Ghế', hoa_don='Hóa đơn',)
 
-    # ghe = []
-    # list = Ghe.query.join(MayBay, MayBay.id == Ghe.id_may_bay)\
-    #                 .join(ChuyenBay, ChuyenBay.id_may_bay == MayBay.id)\
-    #                 .filter(ChuyenBay.id_chuyen_bay == 1)\
-    #                 .add_columns(Ghe.name).all()
-    # if list:
-    #     for l in list:
-    #         ghe.append(l.name)
-    # form_args = {
-    #     'ghe': {
-    #         'validators': [AnyOf(ghe)]
-    #     }
-    # }
+
+class HoaDonModelView(ModelTemplate):
+    form_columns = ('id', 'ngay_xuat_hoa_don', 'nhan_vien', 'khach_hang',)
+    column_list = ('id', 'ngay_xuat_hoa_don', 'nhan_vien', 'khach_hang',)
+    column_labels = dict(id='Mã hóa đơn', ngay_xuat_hoa_don='Ngày xuất hóa đơn',
+                         nhan_vien='Nhân viên', khach_hang='Khách hàng',)
 
 
 # Định nghĩa 1 view mới không liên quan đến các models để hiển thị cách sử dụng cho người dùng
@@ -202,6 +194,7 @@ ad.add_view(UserRoleModelView(UserRole, db.session, category=group2, name="Vai t
 ad.add_view(NhanVienModelView(NhanVien, db.session, category=group2, name="Nhân viên"))
 ad.add_view(AccountModelView(Account, db.session, category=group2, name='Account'))
 ad.add_view(KhachHangModelView(KhachHang, db.session, category=group2, name="Khách hàng"))
+ad.add_view(HoaDonModelView(HoaDon, db.session, name="Hóa đơn"))
 ad.add_view(VeModelView(Ve, db.session, name="Vé"))
 ad.add_view(ThongKeView(name="Thống kê"))
 ad.add_view(HelperView(name="Hướng dẫn sử dụng"))

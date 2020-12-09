@@ -91,11 +91,11 @@ class NhanVien(BaseModel):
     dia_chi = Column(String(50), nullable=False)
     que_quan = Column(String(50), nullable=False)
     dien_thoai = Column(String(10), nullable=False)
-    avatar = Column(String(255), default='/static/images/logo.png', nullable=False)
+    avatar = Column(String(255), default='images/logo.png')
     role = Column(Integer, ForeignKey(UserRole.id), nullable=False)
     # don_dat_ve = relationship('DonDatVe', backref="nhan_vien", lazy=True)
     account = relationship('Account', uselist=False, backref='nhan_vien', lazy=True)
-    ve = relationship('Ve', backref='nhan_vien', lazy=True)
+    hoa_don = relationship('HoaDon', backref='nhan_vien', lazy=True)
 
 
 class Account(db.Model, UserMixin):
@@ -119,7 +119,7 @@ class KhachHang(BaseModel):
     dia_chi = Column(String(50), nullable=False)
     sdt = Column(String(50), nullable=False)
     email = Column(String(50), nullable=False, unique=True)
-    ve = relationship('Ve', backref='khach_hang', lazy=True)
+    hoa_don = relationship('HoaDon', backref='khach_hang', lazy=True)
     # don_dat_ve = relationship('DonDatVe', backref="khach_hang", lazy=True)
 
 
@@ -154,15 +154,28 @@ class Ghe(BaseModel):
     def __str__(self):
         return "%s - %s" %(str(self.name), str(self.may_bay))
 
+
+class HoaDon(db.Model):
+    __tablename__ = "hoadon"
+
+    id = Column(String(50), primary_key=True)
+    ngay_xuat_hoa_don = Column(DateTime, default=datetime.now(), nullable=False)
+    id_nhan_vien = Column(Integer, ForeignKey(NhanVien.id), nullable=False)
+    id_khach_hang = Column(Integer, ForeignKey(KhachHang.id), nullable=False)
+    ve = relationship('Ve', backref='hoa_don', lazy=True)
+
+    def __str__(self):
+        return self.id
+
+
 class Ve(db.Model):
     __tablename__ = "ve"
 
     id = Column(String(50), primary_key=True)
     ngay_xuat_ve = Column(DateTime, default=datetime.now(), nullable=False)
     id_chuyen_bay = Column(Integer, ForeignKey(ChuyenBay.id_chuyen_bay), nullable=False)
-    id_nhan_vien = Column(Integer, ForeignKey(NhanVien.id), nullable=False)
-    id_khach_hang = Column(Integer, ForeignKey(KhachHang.id), nullable=False)
     id_ghe = Column(Integer, ForeignKey(Ghe.id), nullable=False)
+    id_hoa_don = Column(String(50), ForeignKey(HoaDon.id), nullable=False)
 
     # available = Column(Boolean, default=True, nullable=False)
     # id_loai_ve = Column(Integer, ForeignKey(LoaiVe.id), nullable=False)
