@@ -56,8 +56,6 @@
     <tr>
       <th>Khách hàng</th>
       <th>Giới tính</th>
-      <th>Ngày sinh</th>
-      <th>CMND</th>
       <th>Địa chỉ</th>
       <th>Điện thoại</th>
       <th>Email</th>
@@ -67,26 +65,24 @@
       <th>Máy bay</th>
     </tr>
 
-    {% if 'order' in session and session['order'] | length > 0 %}
+    {% if phieu_dat_cho %}
       <form action="{{ url_for('confirm') }}" method="post" id="myForm">
-          {% for x in session['order'] %}
+          {% for x in phieu_dat_cho %}
           <tr>
-            <td>{{ session['order'][x | string()]['fullname'] }}</td>
-            <td>{{ session['order'][x | string()]['gioitinh'] }}</td>
-            <td>{{ session['order'][x | string()]['ngaysinh'] }}</td>
-            <td>{{ session['order'][x | string()]['cmnd'] }}</td>
-            <td>{{ session['order'][x | string()]['diachi'] }}</td>
-            <td>{{ session['order'][x | string()]['dienthoai'] }}</td>
-            <td>{{ session['order'][x | string()]['email'] }}</td>
-            <td>{{ session['order'][x | string()]['ghe'] }}</td>
-            <td>{{ session['order'][x | string()]['chuyenbay'] }}</td>
-            <td>{{ session['order'][x | string()]['duongbay'] }}</td>
-            <td>{{ session['order'][x | string()]['maybay'] }}</td>
+            <td>{{ x.name }}</td>
+            <td>{{ x.gioi_tinh }}</td>
+            <td>{{ x.dia_chi }}</td>
+            <td>{{ x.sdt }}</td>
+            <td>{{ x.email }}</td>
+            <td>{{ x.ghe }}</td>
+            <td>{{ x.id_chuyen_bay }}</td>
+            <td>{{ x.sanbaydi }} - {{ x.sanbayden }}</td>
+            <td>{{ x.maybay }}</td>
                 <td>
-                  <input class="btn btn-success" type="submit" name="submit" value="success{{ x }}">
+                  <input class="btn btn-success" type="submit" name="submit" value="success{{ x.id }}">
                 </td>
                 <td>
-                  <input class="btn btn-danger" type="submit" name="submit" value="fail{{ x }}">
+                  <input class="btn btn-danger" type="submit" name="submit" value="fail{{ x.id }}">
                 </td>
 
           </tr>

@@ -122,16 +122,16 @@ class AccountModelView(ModelTemplate):
     column_labels = dict(nhan_vien='Nhân viên',)
 
 
-class DonDatVeModelView(ModelTemplate):
-    form_columns = ('nhan_vien', 'khach_hang', 'ngay_dat_ve', 've',)
-    column_list = ('nhan_vien', 'khach_hang', 'ngay_dat_ve',)
-    column_labels = dict(nhan_vien='Nhân viên phụ trách', khach_hang='Khách hàng',
-                         ngay_dat_ve='Ngày đặt vé', ve='Vé',)
-
-
 class GheModelView(ModelTemplate):
     form_columns = ('name', 'available', 'may_bay', 'loai_ghe')
+    column_list = ('name', 'available', 'may_bay', 'loai_ghe')
     column_labels = dict(name='Tên ghế', available='Available', may_bay='Máy bay', loai_ghe='Loại ghế',)
+
+
+class PhieuDatChoModelView(ModelTemplate):
+    form_columns = ('ngay_xuat_phieu', 'ghe', 'khach_hang', 'confirm',)
+    column_list = ('ngay_xuat_phieu', 'ghe', 'khach_hang', 'confirm',)
+    column_labels = dict(ngay_xuat_phieu='Ngày xuất phiếu', ghe='Ghế', khach_hang='Khách hàng', confirm='Xác nhận',)
 
 
 class LoaiGheModelView(ModelTemplate):
@@ -147,10 +147,9 @@ class VeModelView(ModelTemplate):
 
 
 class HoaDonModelView(ModelTemplate):
-    form_columns = ('id', 'ngay_xuat_hoa_don', 'nhan_vien', 'khach_hang',)
-    column_list = ('id', 'ngay_xuat_hoa_don', 'nhan_vien', 'khach_hang',)
-    column_labels = dict(id='Mã hóa đơn', ngay_xuat_hoa_don='Ngày xuất hóa đơn',
-                         nhan_vien='Nhân viên', khach_hang='Khách hàng',)
+    form_columns = ('id', 'ngay_xuat_hoa_don', 'khach_hang', 'nhan_vien',)
+    column_list = ('id', 'ngay_xuat_hoa_don', 'khach_hang', 'nhan_vien',)
+    column_labels = dict(id='Mã hóa đơn', ngay_xuat_hoa_don='Ngày xuất hóa đơn', khach_hang='Khách hàng', nhan_vien='Nhân viên')
 
 
 # Định nghĩa 1 view mới không liên quan đến các models để hiển thị cách sử dụng cho người dùng
@@ -182,11 +181,10 @@ group1 = "Airline"
 group2 = "User"
 group3 = "Ticket"
 
-
-ad.add_view(MayBayModelView(MayBay, db.session, category=group1, name="Máy bay"))
 ad.add_view(SanBayModelView(SanBay, db.session, category=group1, name="Sân bay"))
 ad.add_view(LoaiGheModelView(LoaiGhe, db.session, category=group1, name="Loại ghế́"))
 ad.add_view(GheModelView(Ghe, db.session, category=group1, name="Ghế"))
+ad.add_view(MayBayModelView(MayBay, db.session, category=group1, name="Máy bay"))
 ad.add_view(DuongBayModelView(DuongBay, db.session, category=group1, name="Đường bay"))
 ad.add_view(SanBayTrungGianModelView(SanBayTrungGian, db.session, category=group1, name="Sân bay trung gian"))
 ad.add_view(ChuyenBayModelView(ChuyenBay, db.session, category=group1, name="Chuyến bay"))
@@ -194,8 +192,9 @@ ad.add_view(UserRoleModelView(UserRole, db.session, category=group2, name="Vai t
 ad.add_view(NhanVienModelView(NhanVien, db.session, category=group2, name="Nhân viên"))
 ad.add_view(AccountModelView(Account, db.session, category=group2, name='Account'))
 ad.add_view(KhachHangModelView(KhachHang, db.session, category=group2, name="Khách hàng"))
-ad.add_view(HoaDonModelView(HoaDon, db.session, name="Hóa đơn"))
+ad.add_view(PhieuDatChoModelView(PhieuDatCho, db.session, name="Phiếu đặt chổ"))
 ad.add_view(VeModelView(Ve, db.session, name="Vé"))
+ad.add_view(HoaDonModelView(HoaDon, db.session, name="Hóa đơn"))
 ad.add_view(ThongKeView(name="Thống kê"))
 ad.add_view(HelperView(name="Hướng dẫn sử dụng"))
 ad.add_view(LogoutView(name="Đăng xuất"))

@@ -1,6 +1,6 @@
 from banvechuyenbay import db
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Time, DateTime, Float, Date
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from datetime import datetime, date
 from flask_login import UserMixin
 
@@ -120,6 +120,7 @@ class KhachHang(BaseModel):
     sdt = Column(String(50), nullable=False)
     email = Column(String(50), nullable=False, unique=True)
     hoa_don = relationship('HoaDon', backref='khach_hang', lazy=True)
+    phieu_dat_cho = relationship('PhieuDatCho', backref='khach_hang', lazy=True)
     # don_dat_ve = relationship('DonDatVe', backref="khach_hang", lazy=True)
 
 
@@ -143,6 +144,10 @@ class LoaiGhe(BaseModel):
     ghe = relationship('Ghe', backref="loai_ghe", lazy=True)
 
 
+chitietdatcho = db.Table('chitietdatcho', Column('ghe_id', Integer, ForeignKey('ghe.id'), primary_key=True),
+                         Column('phieudatcho_id', Integer, ForeignKey('phieudatcho.id'), primary_key=True))
+
+
 class Ghe(BaseModel):
     __tablename__ = "ghe"
 
@@ -153,6 +158,20 @@ class Ghe(BaseModel):
 
     def __str__(self):
         return "%s - %s" %(str(self.name), str(self.may_bay))
+
+
+class PhieuDatCho(db.Model):
+    __tablename__ = "phieudatcho"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    ngay_xuat_phieu = Column(Date, default=datetime.now().date(), nullable=False)
+    id_khach_hang = Column(Integer, ForeignKey(KhachHang.id), nullable=False)
+    confirm = Column(Boolean, default=False, nullable=False)
+    ghe = relationship('Ghe', secondary='chitietdatcho', lazy='subquery',
+                                 backref=backref('phieu_dat_cho', lazy=True))
+
+    def __str__(self):
+        return "Phiếu đặt chổ số " + str(self.id)
 
 
 class HoaDon(db.Model):

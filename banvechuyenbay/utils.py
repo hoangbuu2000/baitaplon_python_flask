@@ -1,4 +1,4 @@
-from sqlalchemy import extract, desc
+from sqlalchemy import extract, desc, asc
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql.functions import count, sum
 from datetime import datetime
@@ -70,10 +70,26 @@ def get_all_chuyen_bay():
                      sb1.vi_tri.label("noidi"),
                      sb2.vi_tri.label("noiden"),
                      ChuyenBay.ngay_khoi_hanh,
+                     ChuyenBay.id_may_bay,
                      MayBay.name,
                      MayBay.ghe_hang_1,
-                     MayBay.ghe_hang_2).order_by(desc(ChuyenBay.ngay_khoi_hanh)).all()
-    return chuyenbay
+                     MayBay.ghe_hang_2).order_by(asc(ChuyenBay.ngay_khoi_hanh)).all()
+
+    ghetrong = []
+    ghedat = []
+    for cb in chuyenbay:
+        ghe = Ghe.query.filter(Ghe.id_may_bay == cb.id_may_bay).all()
+
+        gt = 0
+        gd = 0
+        for g in ghe:
+            if g.available == False:
+                gd = gd + 1
+            else:
+                gt = gt + 1
+        ghetrong.append(gt)
+        ghedat.append(gd)
+    return chuyenbay, ghedat, ghetrong
 
 
 def get_chuyen_bay(noi_di, noi_den, ngay=None):
@@ -96,28 +112,61 @@ def get_chuyen_bay(noi_di, noi_den, ngay=None):
                          sb1.vi_tri.label("noidi"),
                          sb2.vi_tri.label("noiden"),
                          ChuyenBay.ngay_khoi_hanh,
+                         ChuyenBay.id_may_bay,
                          MayBay.name,
                          MayBay.ghe_hang_1,
-                         MayBay.ghe_hang_2).order_by(desc(ChuyenBay.ngay_khoi_hanh)).all()
-        return chuyenbay
+                         MayBay.ghe_hang_2).order_by(asc(ChuyenBay.ngay_khoi_hanh)).all()
+
+        ghetrong = []
+        ghedat = []
+        for cb in chuyenbay:
+            ghe = Ghe.query.filter(Ghe.id_may_bay == cb.id_may_bay).all()
+
+            gt = 0
+            gd = 0
+            for g in ghe:
+                if g.available == False:
+                    gd = gd + 1
+                else:
+                    gt = gt + 1
+            ghetrong.append(gt)
+            ghedat.append(gd)
+        return chuyenbay, ghedat, ghetrong
+
     else:
         chuyenbay = ChuyenBay.query.join(DuongBay, ChuyenBay.id_duong_bay == DuongBay.id) \
-            .join(sb1, DuongBay.san_bay_di) \
-            .join(sb2, DuongBay.san_bay_den) \
-            .join(MayBay, ChuyenBay.id_may_bay == MayBay.id) \
-            .filter(sb1.vi_tri == noi_di,
-                    sb2.vi_tri == noi_den,
-                    extract('day', ChuyenBay.ngay_khoi_hanh) > datetime.now().day,
-                    extract('month', ChuyenBay.ngay_khoi_hanh) >= datetime.now().month) \
-            .add_columns(ChuyenBay.id_chuyen_bay, sb1.name.label("sanbaydi"),
-                         sb2.name.label("sanbayden"),
-                         sb1.vi_tri.label("noidi"),
-                         sb2.vi_tri.label("noiden"),
-                         ChuyenBay.ngay_khoi_hanh,
-                         MayBay.name,
-                         MayBay.ghe_hang_1,
-                         MayBay.ghe_hang_2).order_by(desc(ChuyenBay.ngay_khoi_hanh)).all()
-        return chuyenbay
+                                .join(sb1, DuongBay.san_bay_di) \
+                                .join(sb2, DuongBay.san_bay_den) \
+                                .join(MayBay, ChuyenBay.id_may_bay == MayBay.id) \
+                                .filter(sb1.vi_tri == noi_di,
+                                        sb2.vi_tri == noi_den,
+                                        extract('day', ChuyenBay.ngay_khoi_hanh) > datetime.now().day,
+                                        extract('month', ChuyenBay.ngay_khoi_hanh) >= datetime.now().month) \
+                                .add_columns(ChuyenBay.id_chuyen_bay, sb1.name.label("sanbaydi"),
+                                             sb2.name.label("sanbayden"),
+                                             sb1.vi_tri.label("noidi"),
+                                             sb2.vi_tri.label("noiden"),
+                                             ChuyenBay.ngay_khoi_hanh,
+                                             ChuyenBay.id_may_bay,
+                                             MayBay.name,
+                                             MayBay.ghe_hang_1,
+                                             MayBay.ghe_hang_2).order_by(asc(ChuyenBay.ngay_khoi_hanh)).all()
+
+        ghetrong = []
+        ghedat = []
+        for cb in chuyenbay:
+            ghe = Ghe.query.filter(Ghe.id_may_bay == cb.id_may_bay).all()
+
+            gt = 0
+            gd = 0
+            for g in ghe:
+                if g.available == False:
+                    gd = gd + 1
+                else:
+                    gt = gt + 1
+            ghetrong.append(gt)
+            ghedat.append(gd)
+        return chuyenbay, ghedat, ghetrong
 
 
 def get_chuyen_bay_id(id):
@@ -228,3 +277,14 @@ def bao_cao_theo_mau(nam=None, thang=None, quy=None):
                              , sum(DuongBay.khoang_cach * LoaiGhe.don_gia).label('doanh_thu')).group_by('thang').all()
 
         return chuyenbay
+
+
+def reset_ghe():
+    chuyen_bay = ChuyenBay.query.filter(extract('day', ChuyenBay.ngay_khoi_hanh) <= datetime.now().day,
+                                        extract('month', ChuyenBay.ngay_khoi_hanh) <= datetime.now().month)\
+                                .all()
+    for cb in chuyen_bay:
+        ghe = Ghe.query.filter(Ghe.id_may_bay == cb.id_may_bay).all()
+        for g in ghe:
+            g.available = True
+            db.session.commit()

@@ -62,8 +62,10 @@
             <td>Ngày khởi hành</td>
             <td>Ghế hạng 1</td>
             <td>Ghế hạng 2</td>
+            <td>Ghế đặt</td>
+            <td>Ghế trống</td>
         </tr>
-        {% for cb in chuyenbay %}
+        {% for idx, cb in chuyenbay %}
         <tr>
             <td><a href="{{ url_for('chi_tiet', id=cb.id_chuyen_bay) }}">{{ cb.id_chuyen_bay }}</a></td>
             <td>{{ cb.name }}</td>
@@ -73,6 +75,8 @@
             <td>{{ cb.ngay_khoi_hanh.strftime('%d-%m-%Y %H:%M %A') }}</td>
             <td>{{ cb.ghe_hang_1 }}</td>
             <td>{{ cb.ghe_hang_2 }}</td>
+            <td>{{ ghedat[idx] }}</td>
+            <td>{{ ghetrong[idx] }}</td>
         </tr>
         {% endfor %}
     </table>

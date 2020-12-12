@@ -1,4 +1,7 @@
 import os
+
+from sqlalchemy.orm import aliased
+
 from banvechuyenbay import app, login, utils, ad, admin
 from flask import render_template, redirect, request, url_for, session
 from banvechuyenbay.models import *
@@ -8,57 +11,52 @@ from flask_admin import BaseView
 from datetime import datetime
 
 
+# code xóa nested dict copy trên mạng ^^
+def dict_sweep(input_dict, key):
+    if isinstance(input_dict, dict):
+        return {k: dict_sweep(v, key) for k, v in input_dict.items() if k != key}
+
+    elif isinstance(input_dict, list):
+        return [dict_sweep(element, key) for element in input_dict]
+
+    else:
+        return input_dict
+
+
 @app.route('/confirm', methods=['GET', 'POST'])
 def confirm():
+    sb1 = aliased(SanBay)
+    sb2 = aliased(SanBay)
+    phieu_dat_cho = PhieuDatCho.query.join(KhachHang, KhachHang.id == PhieuDatCho.id_khach_hang)\
+                                     .join(Ghe, PhieuDatCho.ghe)\
+                                     .join(MayBay, Ghe.id_may_bay == MayBay.id)\
+                                     .join(ChuyenBay, ChuyenBay.id_may_bay == MayBay.id) \
+                                     .join(DuongBay, DuongBay.id == ChuyenBay.id_duong_bay) \
+                                     .join(sb1, DuongBay.san_bay_di)\
+                                     .join(sb2, DuongBay.san_bay_den)\
+                                     .filter(PhieuDatCho.confirm == False)\
+                                     .add_columns(PhieuDatCho.id, KhachHang.name, KhachHang.gioi_tinh,
+                                                  KhachHang.ngay_sinh, KhachHang.Cmnd, KhachHang.dia_chi,
+                                                  KhachHang.sdt, KhachHang.email, Ghe.name.label('ghe'),
+                                                  ChuyenBay.id_chuyen_bay, MayBay.name.label('maybay'),
+                                                  sb1.vi_tri.label('sanbaydi'), sb2.vi_tri.label('sanbayden')).all()
+
     if request.method == 'POST':
-        # duyệt các key trong dict order xem nút submit là đại diện cho key nào
-        for x in session['order']:
-            if request.form.get('submit') == 'success' + x:
-                fullname = session['order'][x]['fullname']
-                gioi_tinh = session['order'][x]['gioitinh']
-                ngay_sinh = session['order'][x]['ngaysinh']
-                cmnd = session['order'][x]['cmnd']
-                dia_chi = session['order'][x]['diachi']
-                dien_thoai = session['order'][x]['dienthoai']
-                email = session['order'][x]['email']
-                ghe = session['order'][x]['ghe']
-                chuyenbay = session['order'][x]['chuyenbay']
-                duongbay = session['order'][x]['duongbay']
-                maybay = session['order'][x]['maybay']
-
-                # khách hàng
-                khach_hang = KhachHang(name=fullname, gioi_tinh=gioi_tinh, ngay_sinh=ngay_sinh,
-                                       Cmnd=cmnd, dia_chi=dia_chi, sdt=dien_thoai, email=email)
-                db.session.add(khach_hang)
+        phieu_dat_cho = PhieuDatCho.query.filter(PhieuDatCho.confirm == False).all()
+        for p in phieu_dat_cho:
+            if request.form.get('submit') == 'success' + str(p.id):
+                p.confirm = True
                 db.session.commit()
+                return redirect('/confirm')
 
-                # hóa đơn
-                date = str(datetime.now().date())
-                ma_hoa_don = date + '-' + khach_hang.Cmnd[8:12]
-                hoa_don = HoaDon(id=ma_hoa_don, id_nhan_vien=current_user.id, id_khach_hang=khach_hang.id)
-
-                db.session.add(hoa_don)
+            if request.form.get('submit') == 'fail' + str(p.id):
+                for g in p.ghe:
+                    g.available = True
+                db.session.delete(p)
                 db.session.commit()
+                return redirect('/confirm')
 
-                # vé
-                ghe = Ghe.query.join(MayBay, MayBay.id == Ghe.id_may_bay).filter(Ghe.name.in_(ghe), MayBay.name == maybay)\
-                               .add_columns(Ghe.id, Ghe.name).all()
-
-                for g in ghe:
-                    ma_ve = duongbay + '[' + g.name + ']'
-                    ve = Ve(id=ma_ve, id_chuyen_bay=int(chuyenbay), id_ghe=g.id, id_hoa_don=hoa_don.id)
-                    db.session.add(ve)
-                    db.session.commit()
-
-
-                del session['order'][x]
-                return render_template('ghinhandatve.html')
-
-            if request.form.get('submit') == 'fail' + x:
-                del session['order'][x]
-                return render_template('ghinhandatve.html')
-
-    return render_template('ghinhandatve.html')
+    return render_template('ghinhandatve.html', phieu_dat_cho=phieu_dat_cho)
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -122,12 +120,8 @@ def profile():
 
 @app.route('/datve', methods=['GET', 'POST'])
 def datve():
-    if 'order' in session and len(session['order']) > 0:
-        pass
-    else:
-        session['order'] = {}
-    khach_hang = ""
     # kiểm tra xem url trước đó là /home hay /home/nv
+    khach_hang = ""
     if 'url' in session:
         if session['url'] == '/home':
             khach_hang = 'khach hang'
@@ -155,55 +149,25 @@ def datve():
         email = request.form.get('email')
 
         if fullname and gioi_tinh and ngay_sinh and cmnd and dia_chi and dien_thoai and email:
-            # ?? :D ??
-            session['fullname'] = fullname
-            session['gioitinh'] = gioi_tinh
-            session['ngaysinh'] = ngay_sinh
-            session['cmnd'] = cmnd
-            session['diachi'] = dia_chi
-            session['dienthoai'] = dien_thoai
-            session['email'] = email
+            kh = KhachHang(name=fullname, gioi_tinh=gioi_tinh, ngay_sinh=ngay_sinh, Cmnd=cmnd, dia_chi=dia_chi,
+                           sdt=dien_thoai, email=email)
+            db.session.add(kh)
+            db.session.commit()
 
-            if len(session['order']) == 0:
-                session['order']['1'] = {}
-                session['order']['1']['fullname'] = fullname
-                session['order']['1']['gioitinh'] = gioi_tinh
-                session['order']['1']['ngaysinh'] = ngay_sinh
-                session['order']['1']['cmnd'] = cmnd
-                session['order']['1']['diachi'] = dia_chi
-                session['order']['1']['dienthoai'] = dien_thoai
-                session['order']['1']['email'] = email
-                session['order']['1']['ghe'] = session['ghe']
-                session['order']['1']['chuyenbay'] = session['chuyenbay']
-                session['order']['1']['duongbay'] = session['duongbay']
-                session['order']['1']['maybay'] = session['maybay']
-            else:
-                idx = str(len(session['order']) + 1)
-                session['order'][idx] = {}
-                session['order'][idx]['fullname'] = fullname
-                session['order'][idx]['gioitinh'] = gioi_tinh
-                session['order'][idx]['ngaysinh'] = ngay_sinh
-                session['order'][idx]['cmnd'] = cmnd
-                session['order'][idx]['diachi'] = dia_chi
-                session['order'][idx]['dienthoai'] = dien_thoai
-                session['order'][idx]['email'] = email
-                session['order'][idx]['ghe'] = session['ghe']
-                session['order'][idx]['chuyenbay'] = session['chuyenbay']
-                session['order'][idx]['duongbay'] = session['duongbay']
-                session['order'][idx]['maybay'] = session['maybay']
+            ghe = Ghe.query.join(MayBay, Ghe.id_may_bay == MayBay.id)\
+                           .filter(Ghe.name.in_(session['ghe']), MayBay.name == session['maybay']).all()
+            for g in ghe:
+                phieu_dat_cho = PhieuDatCho(id_khach_hang=kh.id)
+                phieu_dat_cho.ghe.append(g)
+                db.session.add(phieu_dat_cho)
+                db.session.commit()
 
             # Lấy ghế sau khi khách hàng đã điền thông tin đẻ set ghế đã đặt
             ghedb = Ghe.query.join(MayBay, MayBay.id == Ghe.id_may_bay)\
                              .filter(MayBay.name == session['maybay'], Ghe.name.in_(session['ghe'])).all()
             for g in ghedb:
                 g.available = False
-            db.session.commit()
-
-
-            # khach_hang = KhachHang(name=fullname, gioi_tinh=gioi_tinh, ngay_sinh=ngay_sinh, Cmnd=cmnd, dia_chi=dia_chi,
-            #                        sdt=dien_thoai, email=email)
-            # db.session.add(khach_hang)
-            # db.session.commit()
+                db.session.commit()
 
         # nhớ kiểm tra ghế thuộc máy bay nào,
         # vẫn còn lỗi đặt ghế chuyến bay này sẽ ảnh hưởng ghế chuyến bay khác
@@ -257,8 +221,8 @@ def thongke():
 def chi_tiet(id):
     chuyenbay, ghe = utils.get_chuyen_bay_id(id)
 
-    khach_hang = ""
     # kiểm tra xem url trước đó là /home hay /home/nv
+    khach_hang = ""
     if 'url' in session:
         if session['url'] == '/home':
             khach_hang = 'khach hang'
@@ -276,21 +240,22 @@ def tim_chuyen_bay():
     if 'url' in session:
         if session['url'] == '/home':
             khach_hang = 'khach hang'
-    chuyenbay = utils.get_all_chuyen_bay()
+    chuyenbay, ghedat, ghetrong = utils.get_all_chuyen_bay()
 
     if request.method == "POST":
         noi_di = request.form.get("from")
         noi_den = request.form.get("to")
         ngay = request.form.get("date")
 
-        chuyenbay = utils.get_chuyen_bay(noi_di, noi_den, ngay=ngay)
+        chuyenbay, ghedat, ghetrong = utils.get_chuyen_bay(noi_di, noi_den, ngay=ngay)
 
         if chuyenbay:
             pass
         else:
             message = "Không có thông tin chuyến bay"
 
-    return render_template('flight.html', message=message, chuyenbay=chuyenbay, khach_hang=khach_hang)
+    return render_template('flight.html', message=message, chuyenbay=enumerate(chuyenbay),
+                           ghedat=ghedat, ghetrong=ghetrong, khach_hang=khach_hang)
 
 
 @app.route('/')
@@ -300,15 +265,17 @@ def gate():
 
 @app.route('/home')
 def index():
+    utils.reset_ghe()
     khach_hang = 'khach hang'
-    chuyen_bay = utils.get_all_chuyen_bay()
+    chuyen_bay, ghedat, ghetrong = utils.get_all_chuyen_bay()
     session['url'] = url_for('index')
     return render_template('index.html', chuyen_bay=chuyen_bay, khach_hang=khach_hang)
 
 
 @app.route('/home/nv', methods=['GET', 'POSt'])
 def index1():
-    chuyen_bay = utils.get_all_chuyen_bay()
+    utils.reset_ghe()
+    chuyen_bay, ghedat, ghetrong = utils.get_all_chuyen_bay()
     session['url'] = url_for('index1')
     if request.method == 'POST':
         username = request.form.get('username')
