@@ -51,6 +51,7 @@
       cursor: pointer;
       border-radius: 5px;
       height:60px;
+      width:80px;
     }
     input.chk-btn:not(:checked) + label:hover {
       box-shadow: 0px 1px 3px;
@@ -102,9 +103,10 @@
             </li>
             {% if current_user.is_authenticated and not khach_hang %}
             <!--                <li><a class="text-light btn btn-primary" href="{{ url_for('register1') }}">Đăng ký</a></li>-->
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Đăng xuất</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Profile</a></li>
             <li class="nav-item"><a class="nav-link" href="{{ url_for('confirm') }}">Ghi nhận đặt vé</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('xuatve') }}">Xuất vé</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Đăng xuất</a></li>
             {% endif %}
         </ul>
     </div>

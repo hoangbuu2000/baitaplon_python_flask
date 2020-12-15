@@ -192,7 +192,7 @@ ad.add_view(UserRoleModelView(UserRole, db.session, category=group2, name="Vai t
 ad.add_view(NhanVienModelView(NhanVien, db.session, category=group2, name="Nhân viên"))
 ad.add_view(AccountModelView(Account, db.session, category=group2, name='Account'))
 ad.add_view(KhachHangModelView(KhachHang, db.session, category=group2, name="Khách hàng"))
-ad.add_view(PhieuDatChoModelView(PhieuDatCho, db.session, name="Phiếu đặt chổ"))
+ad.add_view(PhieuDatChoModelView(PhieuDatCho, db.session, name="Phiếu đặt chỗ"))
 ad.add_view(VeModelView(Ve, db.session, name="Vé"))
 ad.add_view(HoaDonModelView(HoaDon, db.session, name="Hóa đơn"))
 ad.add_view(ThongKeView(name="Thống kê"))

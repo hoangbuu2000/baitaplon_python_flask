@@ -2,13 +2,70 @@ import os
 
 from sqlalchemy.orm import aliased
 
-from banvechuyenbay import app, login, utils, ad, admin
+from banvechuyenbay import app, login, utils, ad, admin, mail
 from flask import render_template, redirect, request, url_for, session
 from banvechuyenbay.models import *
 from flask_login import login_user, logout_user, current_user
 import hashlib
 from flask_admin import BaseView
-from datetime import datetime
+from flask_mail import Message
+from datetime import datetime, timedelta
+
+
+@app.route('/xuatve', methods=['GET', 'POST'])
+def xuatve():
+    sb1 = aliased(SanBay)
+    sb2 = aliased(SanBay)
+    phieu_dat_cho = PhieuDatCho.query.join(KhachHang, KhachHang.id == PhieuDatCho.id_khach_hang) \
+        .join(Ghe, PhieuDatCho.ghe) \
+        .join(LoaiGhe, LoaiGhe.id == Ghe.id_loai_ghe) \
+        .join(MayBay, Ghe.id_may_bay == MayBay.id) \
+        .join(ChuyenBay, ChuyenBay.id_may_bay == MayBay.id) \
+        .join(DuongBay, DuongBay.id == ChuyenBay.id_duong_bay) \
+        .join(sb1, DuongBay.san_bay_di) \
+        .join(sb2, DuongBay.san_bay_den) \
+        .filter(PhieuDatCho.confirm == True) \
+        .add_columns(PhieuDatCho.id, KhachHang.name, KhachHang.gioi_tinh,
+                     KhachHang.ngay_sinh, KhachHang.Cmnd, KhachHang.dia_chi,
+                     KhachHang.sdt, KhachHang.email, Ghe.name.label('ghe'),
+                     DuongBay.khoang_cach, LoaiGhe.don_gia.label('giaghe'),
+                     LoaiGhe.name.label('hangghe'),
+                     ChuyenBay.id_chuyen_bay, MayBay.name.label('maybay'),
+                     sb1.vi_tri.label('sanbaydi'), sb2.vi_tri.label('sanbayden')).all()
+
+    if request.method == 'POST':
+        phieu_dat_cho = PhieuDatCho.query.filter(PhieuDatCho.confirm == True).all()
+        for p in phieu_dat_cho:
+            if request.form.get('submit') == 'xuatve' + str(p.id):
+                querry = PhieuDatCho.query.join(KhachHang, KhachHang.id == PhieuDatCho.id_khach_hang) \
+                    .join(Ghe, PhieuDatCho.ghe) \
+                    .join(MayBay, Ghe.id_may_bay == MayBay.id) \
+                    .join(ChuyenBay, ChuyenBay.id_may_bay == MayBay.id) \
+                    .join(DuongBay, DuongBay.id == ChuyenBay.id_duong_bay) \
+                    .join(sb1, DuongBay.san_bay_di) \
+                    .join(sb2, DuongBay.san_bay_den) \
+                    .filter(PhieuDatCho.id == p.id) \
+                    .add_columns(PhieuDatCho.id, Ghe.id.label('ghe'), KhachHang.id.label('khachhang'),
+                                 KhachHang.name, ChuyenBay.id_chuyen_bay, MayBay.name.label('maybay'),
+                                 sb1.vi_tri.label('sanbaydi'), sb2.vi_tri.label('sanbayden')).first()
+
+                ma_hoa_don = 'H' + str(querry.id) + ' - ' + querry.name
+                ma_ve = 'V' + str(querry.id) + ' - ' + querry.name
+
+                hoa_don = HoaDon(id=ma_hoa_don, id_nhan_vien=current_user.id, id_khach_hang=querry.khachhang)
+                db.session.add(hoa_don)
+                db.session.commit()
+
+                ve = Ve(id=ma_ve, id_chuyen_bay=querry.id_chuyen_bay, id_ghe=querry.ghe, id_hoa_don=hoa_don.id)
+                db.session.add(ve)
+                db.session.commit()
+
+                # xuất vé và hóa đơn xong sẽ xóa phiếu đặt chỗ đi
+                db.session.delete(p)
+                db.session.commit()
+                return redirect('/xuatve')
+
+    return render_template('xuatve.html', phieu_dat_cho=phieu_dat_cho)
 
 
 # code xóa nested dict copy trên mạng ^^
@@ -29,6 +86,7 @@ def confirm():
     sb2 = aliased(SanBay)
     phieu_dat_cho = PhieuDatCho.query.join(KhachHang, KhachHang.id == PhieuDatCho.id_khach_hang)\
                                      .join(Ghe, PhieuDatCho.ghe)\
+                                     .join(LoaiGhe, LoaiGhe.id == Ghe.id_loai_ghe)\
                                      .join(MayBay, Ghe.id_may_bay == MayBay.id)\
                                      .join(ChuyenBay, ChuyenBay.id_may_bay == MayBay.id) \
                                      .join(DuongBay, DuongBay.id == ChuyenBay.id_duong_bay) \
@@ -39,6 +97,8 @@ def confirm():
                                                   KhachHang.ngay_sinh, KhachHang.Cmnd, KhachHang.dia_chi,
                                                   KhachHang.sdt, KhachHang.email, Ghe.name.label('ghe'),
                                                   ChuyenBay.id_chuyen_bay, MayBay.name.label('maybay'),
+                                                  DuongBay.khoang_cach, LoaiGhe.don_gia.label('giaghe'),
+                                                  LoaiGhe.name.label('hangghe'),
                                                   sb1.vi_tri.label('sanbaydi'), sb2.vi_tri.label('sanbayden')).all()
 
     if request.method == 'POST':
@@ -47,9 +107,40 @@ def confirm():
             if request.form.get('submit') == 'success' + str(p.id):
                 p.confirm = True
                 db.session.commit()
+
+                # lấy thông tin khách hàng đặt chỗ để gửi mail xác nhận
+                querry = PhieuDatCho.query.join(KhachHang, KhachHang.id == PhieuDatCho.id_khach_hang) \
+                    .join(Ghe, PhieuDatCho.ghe) \
+                    .join(MayBay, Ghe.id_may_bay == MayBay.id) \
+                    .join(ChuyenBay, ChuyenBay.id_may_bay == MayBay.id) \
+                    .join(DuongBay, DuongBay.id == ChuyenBay.id_duong_bay) \
+                    .join(sb1, DuongBay.san_bay_di) \
+                    .join(sb2, DuongBay.san_bay_den) \
+                    .filter(PhieuDatCho.id == p.id) \
+                    .add_columns(KhachHang.email, ChuyenBay.ngay_khoi_hanh, Ghe.name).first()
+                msg = Message('ĐẶT VÉ THÀNH CÔNG!', sender=app.config['MAIL_USERNAME'], recipients=[querry.email])
+                msg.body = 'Chúng tôi đã xác nhận đơn đặt chỗ (' + querry.name + ') của bạn thành công, vui lòng đến ' \
+                           'lấy vé tại công ty đúng lịch hẹn vào ' + \
+                           str((querry.ngay_khoi_hanh - timedelta(1)).strftime('%d-%m-%Y, %H:%M'))
+                mail.send(msg)
                 return redirect('/confirm')
 
             if request.form.get('submit') == 'fail' + str(p.id):
+                # lấy thông tin khách hàng đặt chỗ để gửi mail xác nhận
+                querry = PhieuDatCho.query.join(KhachHang, KhachHang.id == PhieuDatCho.id_khach_hang) \
+                    .join(Ghe, PhieuDatCho.ghe) \
+                    .join(MayBay, Ghe.id_may_bay == MayBay.id) \
+                    .join(ChuyenBay, ChuyenBay.id_may_bay == MayBay.id) \
+                    .join(DuongBay, DuongBay.id == ChuyenBay.id_duong_bay) \
+                    .join(sb1, DuongBay.san_bay_di) \
+                    .join(sb2, DuongBay.san_bay_den) \
+                    .filter(PhieuDatCho.id == p.id) \
+                    .add_columns(KhachHang.email, ChuyenBay.ngay_khoi_hanh, Ghe.name).first()
+                msg = Message('ĐẶT VÉ THẤT BẠI!', sender=app.config['MAIL_USERNAME'], recipients=[querry.email])
+                msg.body = 'Chúng tôi rất tiếc vì một lý do nào đó mà phiếu đặt chỗ (' + querry.name + \
+                           ') của bạn đã không được phê duyệt! '
+                mail.send(msg)
+
                 for g in p.ghe:
                     g.available = True
                 db.session.delete(p)
@@ -149,10 +240,21 @@ def datve():
         email = request.form.get('email')
 
         if fullname and gioi_tinh and ngay_sinh and cmnd and dia_chi and dien_thoai and email:
-            kh = KhachHang(name=fullname, gioi_tinh=gioi_tinh, ngay_sinh=ngay_sinh, Cmnd=cmnd, dia_chi=dia_chi,
-                           sdt=dien_thoai, email=email)
-            db.session.add(kh)
-            db.session.commit()
+            kh = KhachHang.query.filter(KhachHang.Cmnd == cmnd).first()
+            if kh:
+                kh.name = fullname
+                kh.gioi_tinh = gioi_tinh
+                kh.ngay_sinh = ngay_sinh
+                kh.Cmnd = cmnd
+                kh.dia_chi = dia_chi
+                kh.sdt = dien_thoai
+                kh.email = email
+                db.session.commit()
+            else:
+                kh = KhachHang(name=fullname, gioi_tinh=gioi_tinh, ngay_sinh=ngay_sinh, Cmnd=cmnd, dia_chi=dia_chi,
+                               sdt=dien_thoai, email=email)
+                db.session.add(kh)
+                db.session.commit()
 
             ghe = Ghe.query.join(MayBay, Ghe.id_may_bay == MayBay.id)\
                            .filter(Ghe.name.in_(session['ghe']), MayBay.name == session['maybay']).all()
@@ -168,6 +270,13 @@ def datve():
             for g in ghedb:
                 g.available = False
                 db.session.commit()
+                return """
+                <script>
+                    alert('Vui lòng check mail để đợi thông báo xác nhận đặt vé thành công/thất bại!');
+                    window.location = '""" \
+                       + session['url'] + """'
+                </script>
+                       """
 
         # nhớ kiểm tra ghế thuộc máy bay nào,
         # vẫn còn lỗi đặt ghế chuyến bay này sẽ ảnh hưởng ghế chuyến bay khác
@@ -202,7 +311,7 @@ def thongke():
         quarter = request.form.get('quarter')
         lua_chon = request.form.get('options')
 
-        ve, time = utils.bao_cao(lua_chon=lua_chon, year=year, month=month, quarter=quarter)
+        ve, chuyen_bay = utils.bao_cao(lua_chon=lua_chon, year=year, month=month, quarter=quarter)
 
         chuyenbay = utils.bao_cao_theo_mau(nam=year, thang=month, quy=quarter)
 
@@ -214,7 +323,7 @@ def thongke():
 
     return MyView().render('admin/thongke.html', chuyenbay=chuyenbay, nam=year, thang=month, quy=quarter,
                                     len=len(chuyenbay), tong_doanh_thu=tong_doanh_thu,
-                                    ve=ve, time=time, data=data, lua_chon=lua_chon)
+                                    ve=ve, chuyen_bay=chuyen_bay, data=data, lua_chon=lua_chon)
 
 
 @app.route('/chuyenbay/<int:id>')

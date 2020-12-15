@@ -256,13 +256,18 @@ def bao_cao_theo_mau(nam=None, thang=None, quy=None):
                         ,extract('month', Ve.ngay_xuat_ve).label('thang')
                         ,sum(DuongBay.khoang_cach * LoaiGhe.don_gia).label('doanh_thu')).group_by('thang').all()
         if thang:
+            sb1 = aliased(SanBay)
+            sb2 = aliased(SanBay)
             chuyenbay = Ve.query.join(ChuyenBay, ChuyenBay.id_chuyen_bay == Ve.id_chuyen_bay) \
                 .join(Ghe, Ghe.id == Ve.id_ghe)\
                 .join(LoaiGhe, LoaiGhe.id == Ghe.id_loai_ghe) \
                 .join(MayBay, MayBay.id == ChuyenBay.id_may_bay) \
                 .join(DuongBay, DuongBay.id == ChuyenBay.id_duong_bay) \
+                .join(sb1, DuongBay.san_bay_di) \
+                .join(sb2, DuongBay.san_bay_den) \
                 .filter(extract('year', Ve.ngay_xuat_ve) == int(nam), extract('month', Ve.ngay_xuat_ve) == int(thang)) \
-                .add_columns(ChuyenBay.id_chuyen_bay.label('chuyen_bay'), count(Ve.id).label('so_luong_ve')
+                .add_columns(ChuyenBay.id_chuyen_bay.label('chuyen_bay'), sb1.vi_tri.label('noi_di'),
+                             sb2.vi_tri.label('noi_den'), count(Ve.id).label('so_luong_ve')
                              , sum(DuongBay.khoang_cach * LoaiGhe.don_gia).label('doanh_thu')).group_by('chuyen_bay').all()
             return chuyenbay
         if quy:

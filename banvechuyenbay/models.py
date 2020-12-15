@@ -93,7 +93,6 @@ class NhanVien(BaseModel):
     dien_thoai = Column(String(10), nullable=False)
     avatar = Column(String(255), default='images/logo.png')
     role = Column(Integer, ForeignKey(UserRole.id), nullable=False)
-    # don_dat_ve = relationship('DonDatVe', backref="nhan_vien", lazy=True)
     account = relationship('Account', uselist=False, backref='nhan_vien', lazy=True)
     hoa_don = relationship('HoaDon', backref='nhan_vien', lazy=True)
 
@@ -121,20 +120,6 @@ class KhachHang(BaseModel):
     email = Column(String(50), nullable=False, unique=True)
     hoa_don = relationship('HoaDon', backref='khach_hang', lazy=True)
     phieu_dat_cho = relationship('PhieuDatCho', backref='khach_hang', lazy=True)
-    # don_dat_ve = relationship('DonDatVe', backref="khach_hang", lazy=True)
-
-
-# class DonDatVe(db.Model):
-#     __tablename__ = "dondatve"
-#
-#     id_don_dat_ve = Column(Integer, primary_key=True)
-#     id_khach_hang = Column(Integer, ForeignKey(KhachHang.id), nullable=False)
-#     id_nhan_vien = Column(Integer, ForeignKey(NhanVien.id), nullable=False)
-#     ngay_dat_ve = Column(DateTime, default=datetime.now())
-#     ve = relationship('Ve', backref="don_dat_ve", lazy=True)
-#
-#     def __str__(self):
-#         return "Đơn đặt vé số " + str(self.id_don_dat_ve)
 
 
 class LoaiGhe(BaseModel):

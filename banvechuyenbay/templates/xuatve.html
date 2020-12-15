@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 
 {% block title %}
-<title>Ghi nhận đặt vé</title>
+<title>Xuất vé</title>
 {% endblock %}
 
 {% block nav %}
@@ -40,8 +40,8 @@
       {% if current_user.is_authenticated and not khach_hang %}
       <!--                <li><a class="text-light btn btn-primary" href="{{ url_for('register1') }}">Đăng ký</a></li>-->
       <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Profile</a></li>
-      <li class="nav-item"><a class="nav-link active" href="{{ url_for('confirm') }}">Ghi nhận đặt vé</a></li>
-      <li class="nav-item"><a class="nav-link" href="{{ url_for('xuatve') }}">Xuất vé</a></li>
+      <li class="nav-item"><a class="nav-link" href="{{ url_for('confirm') }}">Ghi nhận đặt vé</a></li>
+      <li class="nav-item"><a class="nav-link active" href="{{ url_for('xuatve') }}">Xuất vé</a></li>
       <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Đăng xuất</a></li>
       {% endif %}
     </ul>
@@ -51,7 +51,7 @@
 
 {% block content %}
 
-  <h2 class="text-center text-primary" style="margin-top:20px">Danh sách đơn đặt vé chờ xác nhận</h2>
+  <h2 class="text-center text-primary" style="margin-top:20px">Danh sách đơn đặt vé đã được xác nhận</h2>
 
   <table class="table table-responsive-md">
     <tr class="text-primary">
@@ -65,11 +65,10 @@
       <th>Máy bay</th>
       <th>Giá tiền</th>
       <th></th>
-      <th></th>
     </tr>
 
     {% if phieu_dat_cho %}
-      <form action="{{ url_for('confirm') }}" method="post" id="myForm">
+      <form action="{{ url_for('xuatve') }}" method="post" id="myForm">
           {% for x in phieu_dat_cho %}
           <tr>
             <td>{{ x.name }}</td>
@@ -82,14 +81,9 @@
             <td>{{ x.maybay }}</td>
             <td>{{ "{:,.0f}".format(x.khoang_cach * x.giaghe) }} VNĐ</td>
                 <td>
-                  <label for="success{{ x.id }}" style="cursor:pointer"><i class="fa fa-check text-success"></i></label>
+                  <label for="xuatve{{ x.id }}" style="cursor:pointer" class="btn btn-primary">Xuất vé</label>
                   <input class="btn btn-success" type="submit" name="submit"
-                         id="success{{ x.id }}" value="success{{ x.id }}" style="display:none">
-                </td>
-                <td>
-                  <label for="fail{{ x.id }}" style="cursor:pointer"><i class="fa fa-close text-danger"></i></label>
-                  <input class="btn btn-danger" type="submit" name="submit"
-                         id="fail{{ x.id }}" value="fail{{ x.id }}" style="display:none">
+                         id="xuatve{{ x.id }}" value="xuatve{{ x.id }}" style="display:none">
                 </td>
 
           </tr>

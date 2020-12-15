@@ -1,7 +1,12 @@
 {% extends 'admin/master.html' %}
 
+{% block title %}
+Thống kê - Bán vé chuyến bay
+{% endblock %}
+
 {% block head_css %}
 {{ super() }}
+<link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/my_flask_admin.css') }}">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
@@ -123,7 +128,7 @@
             {% for i in range(len) %}
             <tr>
                 <td>{{ i + 1 }}</td>
-                <td>{{ chuyenbay[i].chuyen_bay }}</td>
+                <td>Chuyến bay số {{ chuyenbay[i].chuyen_bay }}, {{ chuyenbay[i].noi_di }} - {{ chuyenbay[i].noi_den }}</td>
                 <td>{{ chuyenbay[i].so_luong_ve }}</td>
                 <td>{{ "{:.2f}".format(chuyenbay[i].doanh_thu * 100 / tong_doanh_thu) }}%</td>
                 <td>{{ "{:,.0f}".format(chuyenbay[i].doanh_thu) }} VNĐ</td>
@@ -173,7 +178,7 @@
         var myChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: {{ time }},
+                labels: {{ chuyen_bay }},
                 datasets: [{
                     label: 'Báo cáo doanh thu theo {{ lua_chon.lower() }}',
                     data: {{ data }},
